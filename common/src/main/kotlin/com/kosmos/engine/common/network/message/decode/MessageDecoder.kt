@@ -18,32 +18,32 @@ class MessageDecoder: ReplayingDecoder<Message>() {
     val logger = getLogger()
 
     override fun decode(ctx: ChannelHandlerContext, input: ByteBuf, out: MutableList<Any>) {
-        val engine = KosmosEngine.getInstance()
+        try {
+            val engine = KosmosEngine.getInstance()
 
-        val messageHeader = MessageHeader(UUID(input.readLong(), input.readLong()), input.readInt(), input.readInt())
+            val messageHeader = MessageHeader(UUID(input.readLong(), input.readLong()), input.readInt(), input.readInt())
 
-        val factoryEntry = engine.messageRegistry.getEntryByID(messageHeader.messageID)
+            val factoryEntry = engine.messageRegistry.getEntryByID(messageHeader.messageID)
 
-        if (factoryEntry == null) {
-            logger.warn("Failed to find factory entry for message with id ${messageHeader.messageID}")
-            return
+            if (factoryEntry == null) {
+                logger.warn("Failed to find factory entry for message with id ${messageHeader.messageID}")
+                return
+            }
+
+            val message = factoryEntry.createInstance()
+
+            if (message == null) {
+                logger.warn("Failed to create message instance from factory entry for message with id ${messageHeader.messageID}")
+                return
+            }
+
+            message.header = messageHeader
+
+            message.read(input)
+
+            out.add(message)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
-        val message = factoryEntry.createInstance()
-
-        if (message == null) {
-            logger.warn("Failed to create message instance from factory entry for message with id ${messageHeader.messageID}")
-            return
-        }
-
-        message.header = messageHeader
-
-        message.read(input)
-
-        out.add(message)
-    }
-
-    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
-        cause.printStackTrace()
     }
 }
