@@ -21,7 +21,6 @@ switch (OperatingSystem.current()) {
 dependencies {
     implementation project(':common')
 
-
     implementation platform("org.lwjgl:lwjgl-bom:$project.lwjglVersion")
 
     implementation "org.lwjgl:lwjgl"
