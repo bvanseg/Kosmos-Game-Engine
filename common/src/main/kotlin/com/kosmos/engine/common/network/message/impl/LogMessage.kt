@@ -14,7 +14,7 @@ import io.netty.channel.Channel
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class LogMessage(): Message(MessageTarget.SERVER) {
+class LogMessage(): Message(MessageTarget.CLIENT) {
 
     lateinit var message: String
     var logLevel: LogLevel = LogLevel.INFO
