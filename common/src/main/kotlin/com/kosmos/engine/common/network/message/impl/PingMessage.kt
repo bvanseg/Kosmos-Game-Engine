@@ -12,7 +12,7 @@ import io.netty.channel.Channel
  */
 class PingMessage: Message(MessageTarget.COMMON) {
 
-    var timestamp: Long = 0L
+    private var timestamp: Long = 0L
 
     override fun write(buffer: ByteBuf) {
         buffer.writeLong(System.currentTimeMillis())

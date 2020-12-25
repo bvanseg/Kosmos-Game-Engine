@@ -5,8 +5,10 @@ import bvanseg.kotlincommons.project.Version
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.server.event.ServerHandleMessageEvent
 import com.kosmos.engine.common.network.Side
+import com.kosmos.engine.common.network.message.LogLevel
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.impl.ClientInitMessage
+import com.kosmos.engine.common.network.message.impl.LogMessage
 import io.netty.channel.ChannelHandler
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
@@ -46,9 +48,7 @@ class MultiClientHandler: SimpleChannelInboundHandler<Message>() {
         clients[clientUUID] = dummyClient
 
         // Initialize the client with the UUID we assign it.
-        val clientInitMessage = ClientInitMessage()
-        clientInitMessage.uuid = clientUUID
-        clientInitMessage.version = Version(KosmosEngine.getInstance().pluginInfo.annotationData.version)
+        val clientInitMessage = ClientInitMessage(clientUUID, Version(KosmosEngine.getInstance().pluginInfo.annotationData.version))
         ctx.writeAndFlush(clientInitMessage)
     }
 

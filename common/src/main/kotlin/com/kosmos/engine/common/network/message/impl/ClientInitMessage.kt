@@ -18,13 +18,18 @@ import java.util.*
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class ClientInitMessage: Message(MessageTarget.CLIENT) {
+class ClientInitMessage(): Message(MessageTarget.CLIENT) {
 
     // The client needs to know their own UUID.
     lateinit var uuid: UUID
 
     // The client needs to know what version of the engine the server is running.
     lateinit var version: Version
+
+    constructor(uuid: UUID, version: Version) : this() {
+        this.uuid = uuid
+        this.version = version
+    }
 
     override fun write(buffer: ByteBuf) {
         buffer.writeUUID(uuid)
