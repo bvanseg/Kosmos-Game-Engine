@@ -3,4 +3,6 @@ group "com.kosmos.engine.common"
 dependencies {
     // https://mvnrepository.com/artifact/io.netty/netty-all
     api "io.netty:netty-all:$project.nettyAllVersion"
+
+    api "org.joml:joml:$project.jomlVersion"
 }
