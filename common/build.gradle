@@ -1,0 +1,7 @@
+group 'com.kosmos.engine.common'
+version '1.0.0'
+
+dependencies {
+    // https://mvnrepository.com/artifact/io.netty/netty-all
+    api group: 'io.netty', name: 'netty-all', version: '4.1.53.Final'
+}

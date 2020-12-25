@@ -1,0 +1,4 @@
+rootProject.name = 'Kosmos Game Engine'
+include 'common'
+include 'client'
+include 'server'
