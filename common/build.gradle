@@ -2,5 +2,5 @@ group "com.kosmos.engine.common"
 
 dependencies {
     // https://mvnrepository.com/artifact/io.netty/netty-all
-    implementation "io.netty:netty-all:$project.nettyAllVersion"
+    api "io.netty:netty-all:$project.nettyAllVersion"
 }
