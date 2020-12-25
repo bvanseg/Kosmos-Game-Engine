@@ -1,10 +1,10 @@
 package com.kosmos.engine.common.network.message.impl
 
 import bvanseg.kotlincommons.project.Version
-import com.kosmos.bootstrapper.plugin.PluginManager
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
+import com.kosmos.engine.common.network.message.MessageTarget
 import com.kosmos.engine.common.network.util.readUUID
 import com.kosmos.engine.common.network.util.readVersion
 import com.kosmos.engine.common.network.util.writeUUID
@@ -18,7 +18,7 @@ import java.util.*
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class ClientInitMessage: Message() {
+class ClientInitMessage: Message(MessageTarget.CLIENT) {
 
     // The client needs to know their own UUID.
     lateinit var uuid: UUID

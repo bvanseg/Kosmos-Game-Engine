@@ -37,6 +37,11 @@ class MessageDecoder: ReplayingDecoder<Message>() {
                 return
             }
 
+            if (!message.isCorrectTarget(ctx.channel())) {
+                logger.warn("Received a message '${message::class.java}' with the incorrect target side: Expected message targeting ${message.getSide(ctx.channel())} but got ${message.targetSide} instead!")
+                return
+            }
+
             message.header = messageHeader
 
             message.read(input)

@@ -10,7 +10,7 @@ import io.netty.util.AttributeKey
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-abstract class Message {
+abstract class Message(val targetSide: MessageTarget) {
 
     lateinit var header: MessageHeader
 
@@ -23,5 +23,21 @@ abstract class Message {
     fun getSide(channel: Channel): Side? {
         val sideAttributeKey = AttributeKey.valueOf<Side>("side")
         return channel.attr(sideAttributeKey).get()
+    }
+
+    fun isCorrectTarget(side: Side): Boolean {
+        if (targetSide == MessageTarget.COMMON)
+            return true
+        if (side == Side.CLIENT && targetSide == MessageTarget.CLIENT)
+            return true
+        if (side == Side.SERVER && targetSide == MessageTarget.SERVER)
+            return true
+
+        return false
+    }
+
+    fun isCorrectTarget(channel: Channel): Boolean {
+        val side = getSide(channel) ?: return false
+        return isCorrectTarget(side)
     }
 }

@@ -1,7 +1,6 @@
 package com.kosmos.engine.client.network
 
 import com.kosmos.bootstrapper.event.PluginInitializationEvent
-import com.kosmos.engine.client.network.GameClient
 import com.kosmos.engine.common.KosmosEngine
 
 fun main() {

@@ -2,6 +2,7 @@ package com.kosmos.engine.common.network.message.impl
 
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
+import com.kosmos.engine.common.network.message.MessageTarget
 import io.netty.buffer.ByteBuf
 import io.netty.channel.Channel
 
@@ -9,7 +10,7 @@ import io.netty.channel.Channel
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class PingMessage: Message() {
+class PingMessage: Message(MessageTarget.COMMON) {
 
     var timestamp: Long = 0L
 

@@ -1,7 +1,8 @@
 package com.kosmos.engine.common.network.message.impl
 
-import com.kosmos.engine.common.network.Side
+import com.kosmos.engine.common.network.message.LogLevel
 import com.kosmos.engine.common.network.message.Message
+import com.kosmos.engine.common.network.message.MessageTarget
 import com.kosmos.engine.common.network.util.readEnum
 import com.kosmos.engine.common.network.util.readUTF8String
 import com.kosmos.engine.common.network.util.writeEnum
@@ -9,7 +10,11 @@ import com.kosmos.engine.common.network.util.writeUTF8String
 import io.netty.buffer.ByteBuf
 import io.netty.channel.Channel
 
-class LogMessage(): Message() {
+/**
+ * @author Boston Vanseghi
+ * @since 1.0.0
+ */
+class LogMessage(): Message(MessageTarget.SERVER) {
 
     lateinit var message: String
     var logLevel: LogLevel = LogLevel.INFO

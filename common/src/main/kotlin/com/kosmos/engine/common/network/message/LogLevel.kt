@@ -1,4 +1,4 @@
-package com.kosmos.engine.common.network.message.impl
+package com.kosmos.engine.common.network.message
 
 /**
  * @author Boston Vanseghi
