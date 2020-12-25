@@ -8,6 +8,7 @@ import com.kosmos.bootstrapper.plugin.PluginContainer
 import com.kosmos.bootstrapper.plugin.PluginManager
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.impl.ClientInitMessage
+import com.kosmos.engine.common.network.message.impl.LogMessage
 import com.kosmos.engine.common.network.message.impl.PingMessage
 import com.kosmos.engine.common.registry.RegistryManager
 
@@ -57,6 +58,7 @@ class KosmosEngine {
         instance = this // Allows plugins dependent on the engine to grab the engine instance.
 
         messageRegistry.register(ClientInitMessage::class)
+        messageRegistry.register(LogMessage::class)
         messageRegistry.register(PingMessage::class)
 
         logger.info("Finished initializing Kosmos Engine in ${System.currentTimeMillis() - start}ms")
