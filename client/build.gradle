@@ -1,5 +1,4 @@
-group 'com.kosmos.engine.client'
-version '1.0.0'
+group "com.kosmos.engine.client"
 
 import org.gradle.internal.os.OperatingSystem
 
@@ -19,7 +18,7 @@ switch (OperatingSystem.current()) {
 }
 
 dependencies {
-    implementation project(':common')
+    implementation project(":common")
 
     implementation platform("org.lwjgl:lwjgl-bom:$project.lwjglVersion")
 

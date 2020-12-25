@@ -1,6 +1,5 @@
-group 'com.kosmos.engine.server'
-version '1.0.0'
+group "com.kosmos.engine.server"
 
 dependencies {
-    implementation project(':common')
+    implementation project(":common")
 }
