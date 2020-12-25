@@ -23,4 +23,8 @@ class ClientHandler : SimpleChannelInboundHandler<Message>() {
         msg.handle(ctx.channel())
         engine.eventBus.fire(ClientHandleMessageEvent.POST(ctx.channel(), msg))
     }
+
+    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
+        cause.printStackTrace()
+    }
 }
