@@ -56,7 +56,7 @@ class GameClient: AutoCloseable {
             logger.info("Client successfully connected to $host:$port")
 
             channel = channelFuture.channel()
-            engine.eventBus.fire(ClientConnectEvent.POST(channel))
+            engine.eventBus.fire(ClientConnectEvent.POST(channel, host, port))
 
             // Wait until the server socket is closed.
             channelFuture.channel().closeFuture().sync()

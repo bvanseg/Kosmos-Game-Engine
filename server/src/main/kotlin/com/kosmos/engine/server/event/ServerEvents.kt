@@ -8,7 +8,7 @@ open class ServerEvent: KosmosEngineEvent()
 
 open class ServerBindEvent: ServerEvent() {
     class PRE: ServerBindEvent()
-    class POST(val channel: Channel): ServerBindEvent()
+    class POST(val channel: Channel, val host: String, val port: Int): ServerBindEvent()
 }
 
 open class ServerCloseEvent(val channel: Channel): ServerEvent() {

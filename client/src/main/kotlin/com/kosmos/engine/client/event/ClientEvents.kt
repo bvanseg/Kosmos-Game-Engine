@@ -8,7 +8,7 @@ open class ClientEvent: KosmosEngineEvent()
 
 open class ClientConnectEvent: ClientEvent() {
     class PRE: ClientConnectEvent()
-    class POST(val channel: Channel): ClientConnectEvent()
+    class POST(val channel: Channel, val host: String, val port: Int): ClientConnectEvent()
 }
 
 open class ClientCloseEvent(val channel: Channel): ClientEvent() {

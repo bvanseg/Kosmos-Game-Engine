@@ -61,7 +61,7 @@ class GameServer: AutoCloseable {
             logger.info("Successfully bound server to $host:$port")
 
             channel = channelFuture.channel()
-            engine.eventBus.fire(ServerBindEvent.POST(channel))
+            engine.eventBus.fire(ServerBindEvent.POST(channel, host, port))
 
             // Wait until the server socket is closed.
             channelFuture.channel().closeFuture().sync()
