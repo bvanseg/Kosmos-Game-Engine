@@ -30,3 +30,9 @@ fun ByteBuf.writeVersion(version: Version) {
 }
 
 fun ByteBuf.readVersion(): Version = Version(this.readInt(), this.readInt(), this.readInt(), this.readUTF8String())
+
+fun <T: Enum<T>> ByteBuf.writeEnum(enum: T) {
+    this.writeInt(enum.ordinal)
+}
+
+inline fun <reified T: Enum<T>> ByteBuf.readEnum(): T = T::class.java.enumConstants[this.readInt()]
