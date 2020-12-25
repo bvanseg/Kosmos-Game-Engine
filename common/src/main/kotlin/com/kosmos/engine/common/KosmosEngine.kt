@@ -4,6 +4,7 @@ import bvanseg.kotlincommons.any.getLogger
 import bvanseg.kotlincommons.evenir.bus.EventBus
 import com.kosmos.bootstrapper.event.PluginInitializationEvent
 import com.kosmos.bootstrapper.plugin.Plugin
+import com.kosmos.bootstrapper.plugin.PluginContainer
 import com.kosmos.bootstrapper.plugin.PluginManager
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.impl.ClientInitMessage
@@ -30,6 +31,11 @@ class KosmosEngine {
         private lateinit var instance: KosmosEngine
 
         fun getInstance() = instance
+    }
+
+    val pluginInfo: PluginContainer by lazy {
+        val annotationData = this::class.java.getAnnotation(Plugin::class.java)
+        PluginContainer(this, this::class.java, annotationData, mutableListOf(), null)
     }
 
     /**

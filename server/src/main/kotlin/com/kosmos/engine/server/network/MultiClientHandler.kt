@@ -1,11 +1,13 @@
 package com.kosmos.engine.server.network
 
 import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.project.Version
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.server.event.ServerHandleMessageEvent
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.impl.ClientInitMessage
+import io.netty.channel.ChannelHandler
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.util.AttributeKey
@@ -16,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @author Boston Vanseghi
  * @since 1.0.0
  */
+@ChannelHandler.Sharable
 class MultiClientHandler: SimpleChannelInboundHandler<Message>() {
 
     val clients = ConcurrentHashMap<UUID, DummyClient>()
@@ -45,6 +48,7 @@ class MultiClientHandler: SimpleChannelInboundHandler<Message>() {
         // Initialize the client with the UUID we assign it.
         val clientInitMessage = ClientInitMessage()
         clientInitMessage.uuid = clientUUID
+        clientInitMessage.version = Version(KosmosEngine.getInstance().pluginInfo.annotationData.version)
         ctx.writeAndFlush(clientInitMessage)
     }
 
