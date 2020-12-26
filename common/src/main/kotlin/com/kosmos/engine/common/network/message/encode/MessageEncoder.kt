@@ -61,7 +61,7 @@ class MessageEncoder: MessageToByteEncoder<Message>() {
 
             logger.debug("Writing message with header info $header")
             header.write(out)
-            message.write(out)
+            out.writeBytes(sampleBuf)
         } catch (e: Exception) {
             e.printStackTrace()
         }
