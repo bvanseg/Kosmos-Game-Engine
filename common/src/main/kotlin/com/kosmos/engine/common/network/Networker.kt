@@ -14,6 +14,10 @@ import kotlin.collections.LinkedHashMap
  */
 abstract class Networker(val side: Side) {
 
+    init {
+        System.setProperty("io.netty.tryReflectionSetAccessible", "true")
+    }
+
     abstract val channel: Channel
     abstract var uuid: UUID
 
