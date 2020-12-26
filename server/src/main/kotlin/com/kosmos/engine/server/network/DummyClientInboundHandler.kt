@@ -16,7 +16,7 @@ import java.util.*
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class DummyClientHandler(val dummyClientManager: DummyClientManager): SimpleChannelInboundHandler<Message>() {
+class DummyClientInboundHandler(private val dummyClientManager: DummyClientManager): SimpleChannelInboundHandler<Message>() {
 
     private val logger = getLogger()
 
@@ -37,12 +37,12 @@ class DummyClientHandler(val dummyClientManager: DummyClientManager): SimpleChan
         ctx.channel().attr(sideAttributeKey).set(Side.SERVER)
 
         // Track the client within our map.
-        val dummyClient = DummyClient(ctx.channel())
+        val dummyClient = DummyClient(ctx.channel(), System.currentTimeMillis())
         dummyClientManager.clients[clientUUID] = dummyClient
 
         // Initialize the client with the UUID we assign it.
         val clientInitMessage = ClientInitMessage(clientUUID, Version(KosmosEngine.getInstance().pluginInfo.annotationData.version))
-        ctx.writeAndFlush(clientInitMessage)
+        dummyClient.send(clientInitMessage)
     }
 
     override fun channelInactive(ctx: ChannelHandlerContext) {
@@ -60,10 +60,19 @@ class DummyClientHandler(val dummyClientManager: DummyClientManager): SimpleChan
     override fun channelRead0(ctx: ChannelHandlerContext, msg: Message) {
         val engine = KosmosEngine.getInstance()
 
+        val uuidAttributeKey = AttributeKey.valueOf<UUID>("uuid")
+        val uuid = ctx.channel().attr(uuidAttributeKey).get()
+
+        val dummyClient = dummyClientManager.clients[uuid]
+
+        dummyClient?.messagesReceived?.incrementAndGet()
+
         engine.eventBus.fire(ServerHandleMessageEvent.PRE(ctx.channel(), msg))
         msg.handle(ctx.channel())
         engine.eventBus.fire(ServerHandleMessageEvent.POST(ctx.channel(), msg))
     }
+
+
 
     /**
      * Handles exceptions from the client.

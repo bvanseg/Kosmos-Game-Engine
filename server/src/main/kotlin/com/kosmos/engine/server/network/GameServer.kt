@@ -14,6 +14,7 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.channel.ChannelFuture
+import io.netty.util.AttributeKey
 import java.net.InetSocketAddress
 import java.util.*
 
@@ -31,7 +32,7 @@ class GameServer: AutoCloseable {
     // Worker group for actually managing clients.
     private val workerGroup = NioEventLoopGroup()
 
-    private val clientManager = DummyClientManager()
+    private val dummyClientManager = DummyClientManager()
 
     private val logger = getLogger()
 
@@ -50,7 +51,7 @@ class GameServer: AutoCloseable {
                         val pipeline = channel.pipeline()
                         pipeline.addLast(MessageDecoder())
                         pipeline.addLast(MessageEncoder())
-                        pipeline.addLast(DummyClientHandler(clientManager))
+                        pipeline.addLast(DummyClientInboundHandler(dummyClientManager))
                     }
 
                 })
@@ -74,16 +75,18 @@ class GameServer: AutoCloseable {
     }
 
     fun sendToClient(message: Message, uuid: UUID) {
-        val client = clientManager.clients[uuid] ?: return
-        client.channel.writeAndFlush(message)
+        val dummyClient = dummyClientManager.clients[uuid] ?: return
+        dummyClient.send(message)
     }
 
     fun sendToClient(message: Message, dummyClient: DummyClient) {
-        dummyClient.channel.writeAndFlush(message)
+        dummyClient.send(message)
     }
 
     fun sendToClient(message: Message, channel: Channel) {
-        channel.writeAndFlush(message)
+        val uuidAttributeKey = AttributeKey.valueOf<UUID>("uuid")
+        val uuid = channel.attr(uuidAttributeKey).get()
+        dummyClientManager.clients[uuid]?.send(message)
     }
 
     fun sendToClients(message: Message, vararg uuids: UUID) {
@@ -94,7 +97,7 @@ class GameServer: AutoCloseable {
 
     fun sendToClients(message: Message, vararg dummyClients: DummyClient) {
         dummyClients.forEach { dummyClient ->
-            sendToClient(message, dummyClient)
+            dummyClient.send(message)
         }
     }
 
@@ -105,8 +108,8 @@ class GameServer: AutoCloseable {
     }
 
     fun broadcast(message: Message) {
-        clientManager.clients.forEach { (_, client) ->
-            client.channel.writeAndFlush(message)
+        dummyClientManager.clients.forEach { (_, client) ->
+            client.send(message)
         }
     }
 
