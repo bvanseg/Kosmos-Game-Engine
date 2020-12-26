@@ -15,6 +15,7 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 import java.net.InetSocketAddress
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * @author Boston Vanseghi
@@ -28,7 +29,13 @@ class GameClient: AutoCloseable {
 
     private val logger = getLogger()
 
-    private val clientHandler = ClientHandler()
+    private val clientHandler = ClientHandler(this)
+
+    val messagesSent: AtomicLong = AtomicLong(0L)
+    val messagesReceived: AtomicLong = AtomicLong(0L)
+
+    var timestampConnected: Long = 0
+        private set
 
     fun connect(host: String, port: Int) {
 
@@ -53,6 +60,7 @@ class GameClient: AutoCloseable {
             logger.info("Attempting to connect client to $host:$port...")
             engine.eventBus.fire(ClientConnectEvent.PRE())
             val channelFuture: ChannelFuture = bootstrap.connect(InetSocketAddress(host, port)).sync()
+            timestampConnected = System.currentTimeMillis()
             logger.info("Client successfully connected to $host:$port")
 
             channel = channelFuture.channel()
@@ -68,6 +76,7 @@ class GameClient: AutoCloseable {
 
     fun sendToServer(message: Message) {
         channel.writeAndFlush(message)
+        messagesSent.getAndIncrement()
     }
 
     override fun close() {

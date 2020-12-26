@@ -33,6 +33,6 @@ class DummyClient(
 
     fun send(message: Message) {
         channel.writeAndFlush(message)
-        messagesSent.incrementAndGet()
+        messagesSent.getAndIncrement()
     }
 }

@@ -9,7 +9,7 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.util.AttributeKey
 
-class ClientHandler : SimpleChannelInboundHandler<Message>() {
+class ClientHandler(val gameClient: GameClient) : SimpleChannelInboundHandler<Message>() {
 
     override fun channelActive(ctx: ChannelHandlerContext) {
         val sideAttribute = AttributeKey.valueOf<Side>("side")
@@ -22,6 +22,8 @@ class ClientHandler : SimpleChannelInboundHandler<Message>() {
         engine.eventBus.fire(ClientHandleMessageEvent.PRE(ctx.channel(), msg))
         msg.handle(ctx.channel())
         engine.eventBus.fire(ClientHandleMessageEvent.POST(ctx.channel(), msg))
+
+        gameClient.messagesReceived.getAndIncrement()
     }
 
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {

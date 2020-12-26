@@ -65,11 +65,11 @@ class DummyClientInboundHandler(private val dummyClientManager: DummyClientManag
 
         val dummyClient = dummyClientManager.clients[uuid]
 
-        dummyClient?.messagesReceived?.incrementAndGet()
-
         engine.eventBus.fire(ServerHandleMessageEvent.PRE(ctx.channel(), msg))
         msg.handle(ctx.channel())
         engine.eventBus.fire(ServerHandleMessageEvent.POST(ctx.channel(), msg))
+
+        dummyClient?.messagesReceived?.getAndIncrement()
     }
 
 
