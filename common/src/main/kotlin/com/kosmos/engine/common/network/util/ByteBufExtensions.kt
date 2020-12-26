@@ -38,6 +38,25 @@ fun <T: Enum<T>> ByteBuf.writeEnum(enum: T) {
 
 inline fun <reified T: Enum<T>> ByteBuf.readEnum(): T = T::class.java.enumConstants[this.readInt()]
 
+inline fun <reified T> ByteBuf.writeBooleanArray(vararg booleans: Boolean) {
+    when(T::class) {
+        Byte::class -> booleans.toByte()
+        Short::class -> booleans.toShort()
+        Int::class -> booleans.toInt()
+        Long::class -> booleans.toLong()
+        else -> throw IllegalArgumentException("Invalid type ${T::class} to decode BooleanArray into. Valid types: Byte, Short, Int, Long")
+    }
+}
+
+inline fun <reified T> ByteBuf.readBooleanArray() = when(T::class) {
+    Byte::class -> this.readByte().toBooleanArray()
+    Short::class -> this.readShort().toBooleanArray()
+    Int::class -> this.readInt().toBooleanArray()
+    Long::class -> this.readLong().toBooleanArray()
+    else -> throw IllegalArgumentException("Invalid type ${T::class} to derive a BooleanArray from. Valid types: Byte, Short, Int, Long")
+}
+
+
 // JOML-related extensions
 
 fun ByteBuf.writeVector2ic(vector: Vector2ic) {
