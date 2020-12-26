@@ -1,5 +1,6 @@
 package com.kosmos.engine.server.network
 
+import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.message.Message
 import io.netty.channel.Channel
 import java.util.*
@@ -17,7 +18,9 @@ class DummyClient(
     /**
      * The channel connecting the server to the dummy client.
      */
-    private val channel: Channel,
+    override val channel: Channel,
+
+    override var uuid: UUID,
     /**
      * The time relative to the server at which the client connected.
      */
@@ -29,9 +32,9 @@ class DummyClient(
     /**
      * The number of messages the server has received from the client.
      */
-    var messagesReceived: AtomicLong = AtomicLong(0L)) {
+    var messagesReceived: AtomicLong = AtomicLong(0L)): Networker() {
 
-    fun send(message: Message) {
+    override fun send(message: Message) {
         channel.writeAndFlush(message)
         messagesSent.getAndIncrement()
     }

@@ -1,6 +1,7 @@
 package com.kosmos.engine.common.network.message
 
 import bvanseg.kotlincommons.any.getLogger
+import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
 import io.netty.buffer.ByteBuf
 import io.netty.channel.Channel
@@ -18,11 +19,11 @@ abstract class Message(val targetSide: MessageTarget) {
 
     abstract fun read(buffer: ByteBuf)
     abstract fun write(buffer: ByteBuf)
-    abstract fun handle(channel: Channel)
+    abstract fun handle(networker: Networker)
 
-    fun getSide(channel: Channel): Side? {
+    fun getSide(networker: Networker): Side? {
         val sideAttributeKey = AttributeKey.valueOf<Side>("side")
-        return channel.attr(sideAttributeKey).get()
+        return networker.channel.attr(sideAttributeKey).get()
     }
 
     fun isCorrectTarget(side: Side): Boolean {
@@ -36,8 +37,8 @@ abstract class Message(val targetSide: MessageTarget) {
         return false
     }
 
-    fun isCorrectTarget(channel: Channel): Boolean {
-        val side = getSide(channel) ?: return false
+    fun isCorrectTarget(networker: Networker): Boolean {
+        val side = getSide(networker) ?: return false
         return isCorrectTarget(side)
     }
 }

@@ -2,6 +2,7 @@ package com.kosmos.engine.common.network.message.encode
 
 import bvanseg.kotlincommons.any.getLogger
 import com.kosmos.engine.common.KosmosEngine
+import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageHeader
 import io.netty.buffer.ByteBuf
@@ -22,8 +23,11 @@ class MessageEncoder: MessageToByteEncoder<Message>() {
     override fun encode(ctx: ChannelHandlerContext, message: Message, out: ByteBuf) {
         try {
 
+            val networkerAttributeKey = AttributeKey.valueOf<Networker>("networker")
+            val networker = ctx.channel().attr(networkerAttributeKey).get()
+
             // Get the opposite side of this channel. If this channel is the client, this returns the server, for ex.
-            val side = (message.getSide(ctx.channel()) ?: return).opposite()
+            val side = (message.getSide(networker) ?: return).opposite()
 
             /*
                 If:

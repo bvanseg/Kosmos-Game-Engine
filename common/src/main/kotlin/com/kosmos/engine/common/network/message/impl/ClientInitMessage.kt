@@ -2,6 +2,7 @@ package com.kosmos.engine.common.network.message.impl
 
 import bvanseg.kotlincommons.project.Version
 import com.kosmos.engine.common.KosmosEngine
+import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageTarget
@@ -41,11 +42,12 @@ class ClientInitMessage(): Message(MessageTarget.CLIENT) {
         version = buffer.readVersion()
     }
 
-    override fun handle(channel: Channel) {
-        getSide(channel)?.let { side ->
+    override fun handle(networker: Networker) {
+        getSide(networker)?.let { side ->
             if (side == Side.CLIENT) {
-                val uuidAttributeKey = AttributeKey.valueOf<UUID>("uuid")
-                channel.attr(uuidAttributeKey).set(uuid)
+                networker.setAttribute("uuid", uuid)
+                networker.uuid = uuid
+
                 logger.info("Client UUID established by server: $uuid")
             }
         }

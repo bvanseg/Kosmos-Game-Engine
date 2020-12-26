@@ -1,5 +1,6 @@
 package com.kosmos.engine.common.network.message.impl
 
+import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.message.LogLevel
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageTarget
@@ -34,7 +35,7 @@ class LogMessage(): Message(MessageTarget.CLIENT) {
         buffer.writeEnum(logLevel)
     }
 
-    override fun handle(channel: Channel) {
+    override fun handle(networker: Networker) {
         when(logLevel) {
             LogLevel.INFO -> logger.info(message)
             LogLevel.WARN -> logger.warn(message)

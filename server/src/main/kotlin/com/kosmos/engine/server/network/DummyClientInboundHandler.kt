@@ -3,6 +3,7 @@ package com.kosmos.engine.server.network
 import bvanseg.kotlincommons.any.getLogger
 import bvanseg.kotlincommons.project.Version
 import com.kosmos.engine.common.KosmosEngine
+import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.server.event.ServerHandleMessageEvent
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
@@ -37,8 +38,11 @@ class DummyClientInboundHandler(private val dummyClientManager: DummyClientManag
         ctx.channel().attr(sideAttributeKey).set(Side.SERVER)
 
         // Track the client within our map.
-        val dummyClient = DummyClient(ctx.channel(), System.currentTimeMillis())
+        val dummyClient = DummyClient(ctx.channel(), clientUUID, System.currentTimeMillis())
         dummyClientManager.clients[clientUUID] = dummyClient
+
+        val networkerAttributeKey = AttributeKey.valueOf<Networker>("networker")
+        ctx.channel().attr(networkerAttributeKey).set(dummyClient)
 
         // Initialize the client with the UUID we assign it.
         val clientInitMessage = ClientInitMessage(clientUUID, Version(KosmosEngine.getInstance().pluginInfo.annotationData.version))
@@ -63,13 +67,13 @@ class DummyClientInboundHandler(private val dummyClientManager: DummyClientManag
         val uuidAttributeKey = AttributeKey.valueOf<UUID>("uuid")
         val uuid = ctx.channel().attr(uuidAttributeKey).get()
 
-        val dummyClient = dummyClientManager.clients[uuid]
+        val dummyClient = dummyClientManager.clients[uuid] ?: return
 
-        engine.eventBus.fire(ServerHandleMessageEvent.PRE(ctx.channel(), msg))
-        msg.handle(ctx.channel())
-        engine.eventBus.fire(ServerHandleMessageEvent.POST(ctx.channel(), msg))
+        engine.eventBus.fire(ServerHandleMessageEvent.PRE(dummyClient, msg))
+        msg.handle(dummyClient)
+        engine.eventBus.fire(ServerHandleMessageEvent.POST(dummyClient, msg))
 
-        dummyClient?.messagesReceived?.getAndIncrement()
+        dummyClient.messagesReceived.getAndIncrement()
     }
 
 

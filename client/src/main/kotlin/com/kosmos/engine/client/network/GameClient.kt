@@ -4,6 +4,7 @@ import bvanseg.kotlincommons.any.getLogger
 import com.kosmos.engine.client.event.ClientCloseEvent
 import com.kosmos.engine.client.event.ClientConnectEvent
 import com.kosmos.engine.common.KosmosEngine
+import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.decode.MessageDecoder
 import com.kosmos.engine.common.network.message.encode.MessageEncoder
@@ -15,21 +16,24 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 import java.net.InetSocketAddress
+import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
 /**
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class GameClient: AutoCloseable {
+class GameClient: Networker(), AutoCloseable {
 
-    private lateinit var channel: Channel
+    override lateinit var channel: Channel
+
+    override lateinit var uuid: UUID
 
     private val group = NioEventLoopGroup()
 
     private val logger = getLogger()
 
-    private val clientHandler = ClientHandler(this)
+    private val clientHandler = ClientInboundHandler(this)
 
     val messagesSent: AtomicLong = AtomicLong(0L)
     val messagesReceived: AtomicLong = AtomicLong(0L)
@@ -74,7 +78,7 @@ class GameClient: AutoCloseable {
         }
     }
 
-    fun sendToServer(message: Message) {
+    override fun send(message: Message) {
         channel.writeAndFlush(message)
         messagesSent.getAndIncrement()
     }
