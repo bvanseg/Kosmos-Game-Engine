@@ -24,15 +24,13 @@ class PingMessage: Message(MessageTarget.COMMON) {
     }
 
     override fun handle(networker: Networker) {
-        getSide(networker)?.let { side ->
-            when (side) {
-                Side.CLIENT -> {
-                    logger.debug("Ping: ${System.currentTimeMillis() - timestamp}ms")
-                }
-                Side.SERVER -> {
-                    logger.debug("Server side received ping from client ${networker.uuid}. Echoing...")
-                    networker.send(this)
-                }
+        when (side) {
+            Side.CLIENT -> {
+                logger.debug("Ping: ${System.currentTimeMillis() - timestamp}ms")
+            }
+            Side.SERVER -> {
+                logger.debug("Server side received ping from client ${networker.uuid}. Echoing...")
+                networker.send(this)
             }
         }
     }

@@ -27,7 +27,7 @@ class MessageEncoder: MessageToByteEncoder<Message>() {
             val networker = ctx.channel().attr(networkerAttributeKey).get()
 
             // Get the opposite side of this channel. If this channel is the client, this returns the server, for ex.
-            val side = (message.getSide(networker) ?: return).opposite()
+            val oppositeSide = networker.side.opposite()
 
             /*
                 If:
@@ -37,8 +37,8 @@ class MessageEncoder: MessageToByteEncoder<Message>() {
                 This check makes sure that the Message#messageTarget and opposite of our side are the same. (We can't
                 target clients as a client or servers as a server).
              */
-            if (!message.isCorrectTarget(side)) {
-                logger.warn("Received a message '${message::class.java}' with the incorrect target side: Expected message targeting $side but got ${message.targetSide} instead!")
+            if (!message.isCorrectTarget(oppositeSide)) {
+                logger.warn("Received a message '${message::class.java}' with the incorrect target side: Expected message targeting $oppositeSide but got ${message.targetSide} instead!")
                 return
             }
 
@@ -48,6 +48,8 @@ class MessageEncoder: MessageToByteEncoder<Message>() {
 
             val sampleBuf = Unpooled.buffer()
 
+            message.side = networker.side
+
             message.write(sampleBuf)
 
             val size = sampleBuf.capacity()
@@ -55,7 +57,9 @@ class MessageEncoder: MessageToByteEncoder<Message>() {
             val uuidAttributeKey = AttributeKey.valueOf<UUID>("uuid")
             val uuid = ctx.channel().attr(uuidAttributeKey).get()
 
-            val header = MessageHeader(uuid, messageID, size)
+            val header = MessageHeader(uuid, messageID, networker.messagesSent.get(), size)
+
+            logger.debug("Writing message with header info $header")
             header.write(out)
             message.write(out)
         } catch (e: Exception) {

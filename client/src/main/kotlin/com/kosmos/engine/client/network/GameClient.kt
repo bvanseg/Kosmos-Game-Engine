@@ -5,9 +5,11 @@ import com.kosmos.engine.client.event.ClientCloseEvent
 import com.kosmos.engine.client.event.ClientConnectEvent
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.Networker
+import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.decode.MessageDecoder
 import com.kosmos.engine.common.network.message.encode.MessageEncoder
+import com.kosmos.engine.common.network.message.impl.PingMessage
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.Channel
 import io.netty.channel.ChannelFuture
@@ -23,7 +25,7 @@ import java.util.concurrent.atomic.AtomicLong
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class GameClient: Networker(), AutoCloseable {
+class GameClient: Networker(Side.CLIENT), AutoCloseable {
 
     override lateinit var channel: Channel
 
@@ -34,9 +36,6 @@ class GameClient: Networker(), AutoCloseable {
     private val logger = getLogger()
 
     private val clientHandler = ClientInboundHandler(this)
-
-    val messagesSent: AtomicLong = AtomicLong(0L)
-    val messagesReceived: AtomicLong = AtomicLong(0L)
 
     var timestampConnected: Long = 0
         private set

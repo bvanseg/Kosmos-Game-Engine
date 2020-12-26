@@ -9,7 +9,6 @@ import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.ReplayingDecoder
 import io.netty.util.AttributeKey
-import java.util.*
 
 /**
  * @author Boston Vanseghi
@@ -23,19 +22,20 @@ class MessageDecoder: ReplayingDecoder<Message>() {
         try {
             val engine = KosmosEngine.getInstance()
 
-            val messageHeader = MessageHeader(UUID(input.readLong(), input.readLong()), input.readInt(), input.readInt())
+            val header = MessageHeader.read(input)
+            logger.debug("Reading message with header info $header")
 
-            val factoryEntry = engine.messageRegistry.getEntryByID(messageHeader.messageID)
+            val factoryEntry = engine.messageRegistry.getEntryByID(header.messageTypeID)
 
             if (factoryEntry == null) {
-                logger.warn("Failed to find factory entry for message with id ${messageHeader.messageID}")
+                logger.warn("Failed to find factory entry for message with id ${header.messageTypeID}")
                 return
             }
 
             val message = factoryEntry.createInstance()
 
             if (message == null) {
-                logger.warn("Failed to create message instance from factory entry for message with id ${messageHeader.messageID}")
+                logger.warn("Failed to create message instance from factory entry for message with id ${header.messageTypeID}")
                 return
             }
 
@@ -43,11 +43,12 @@ class MessageDecoder: ReplayingDecoder<Message>() {
             val networker = ctx.channel().attr(networkerAttributeKey).get()
 
             if (!message.isCorrectTarget(networker)) {
-                logger.warn("Received a message '${message::class.java}' with the incorrect target side: Expected message targeting ${message.getSide(networker)} but got ${message.targetSide} instead!")
+                logger.warn("Received a message '${message::class.java}' with the incorrect target side: Expected message targeting ${networker.side} but got ${message.targetSide} instead!")
                 return
             }
 
-            message.header = messageHeader
+            message.header = header
+            message.side = networker.side
 
             message.read(input)
 

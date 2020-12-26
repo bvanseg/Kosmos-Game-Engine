@@ -43,13 +43,11 @@ class ClientInitMessage(): Message(MessageTarget.CLIENT) {
     }
 
     override fun handle(networker: Networker) {
-        getSide(networker)?.let { side ->
-            if (side == Side.CLIENT) {
-                networker.setAttribute("uuid", uuid)
-                networker.uuid = uuid
+        if (side == Side.CLIENT) {
+            networker.setAttribute("uuid", uuid)
+            networker.uuid = uuid
 
-                logger.info("Client UUID established by server: $uuid")
-            }
+            logger.info("Client UUID established by server: $uuid")
         }
 
         KosmosEngine.getInstance().pluginInfo.let {

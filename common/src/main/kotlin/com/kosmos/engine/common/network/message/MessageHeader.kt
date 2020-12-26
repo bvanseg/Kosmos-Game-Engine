@@ -9,14 +9,25 @@ import java.util.*
  */
 data class MessageHeader(
     val uuid: UUID,
-    val messageID: Int,
+    val messageTypeID: Int,
+    val messageID: Long,
     val messageSize: Int
 ) {
 
     fun write(buffer: ByteBuf) {
         buffer.writeLong(uuid.mostSignificantBits)
         buffer.writeLong(uuid.leastSignificantBits)
-        buffer.writeInt(messageID)
+        buffer.writeInt(messageTypeID)
+        buffer.writeLong(messageID)
         buffer.writeInt(messageSize)
+    }
+
+    companion object {
+        fun read(buffer: ByteBuf): MessageHeader = MessageHeader(
+            UUID(buffer.readLong(), buffer.readLong()),
+            buffer.readInt(),
+            buffer.readLong(),
+            buffer.readInt()
+        )
     }
 }

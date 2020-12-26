@@ -14,17 +14,13 @@ import io.netty.util.AttributeKey
 abstract class Message(val targetSide: MessageTarget) {
 
     lateinit var header: MessageHeader
+    lateinit var side: Side
 
     val logger = getLogger()
 
     abstract fun read(buffer: ByteBuf)
     abstract fun write(buffer: ByteBuf)
     abstract fun handle(networker: Networker)
-
-    fun getSide(networker: Networker): Side? {
-        val sideAttributeKey = AttributeKey.valueOf<Side>("side")
-        return networker.channel.attr(sideAttributeKey).get()
-    }
 
     fun isCorrectTarget(side: Side): Boolean {
         if (targetSide == MessageTarget.COMMON)
@@ -38,7 +34,7 @@ abstract class Message(val targetSide: MessageTarget) {
     }
 
     fun isCorrectTarget(networker: Networker): Boolean {
-        val side = getSide(networker) ?: return false
+        val side = networker.side
         return isCorrectTarget(side)
     }
 }

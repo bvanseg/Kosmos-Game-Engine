@@ -1,6 +1,7 @@
 package com.kosmos.engine.server.network
 
 import com.kosmos.engine.common.network.Networker
+import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
 import io.netty.channel.Channel
 import java.util.*
@@ -24,15 +25,7 @@ class DummyClient(
     /**
      * The time relative to the server at which the client connected.
      */
-    val timestampConnected: Long,
-    /**
-     * The number of messages the server has sent to the client.
-     */
-    var messagesSent: AtomicLong = AtomicLong(0L),
-    /**
-     * The number of messages the server has received from the client.
-     */
-    var messagesReceived: AtomicLong = AtomicLong(0L)): Networker() {
+    val timestampConnected: Long): Networker(Side.SERVER) {
 
     override fun send(message: Message) {
         channel.writeAndFlush(message)
