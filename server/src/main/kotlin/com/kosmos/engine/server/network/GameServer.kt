@@ -31,7 +31,7 @@ class GameServer: AutoCloseable {
     // Worker group for actually managing clients.
     private val workerGroup = NioEventLoopGroup()
 
-    private val multiClientHandler = MultiClientHandler()
+    private val clientManager = DummyClientManager()
 
     private val logger = getLogger()
 
@@ -50,7 +50,7 @@ class GameServer: AutoCloseable {
                         val pipeline = channel.pipeline()
                         pipeline.addLast(MessageDecoder())
                         pipeline.addLast(MessageEncoder())
-                        pipeline.addLast(multiClientHandler)
+                        pipeline.addLast(DummyClientHandler(clientManager))
                     }
 
                 })
@@ -74,7 +74,7 @@ class GameServer: AutoCloseable {
     }
 
     fun sendToClient(message: Message, uuid: UUID) {
-        val client = multiClientHandler.clients[uuid] ?: return
+        val client = clientManager.clients[uuid] ?: return
         client.channel.writeAndFlush(message)
     }
 
@@ -105,7 +105,7 @@ class GameServer: AutoCloseable {
     }
 
     fun broadcast(message: Message) {
-        multiClientHandler.clients.forEach { (_, client) ->
+        clientManager.clients.forEach { (_, client) ->
             client.channel.writeAndFlush(message)
         }
     }

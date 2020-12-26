@@ -5,25 +5,18 @@ import bvanseg.kotlincommons.project.Version
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.server.event.ServerHandleMessageEvent
 import com.kosmos.engine.common.network.Side
-import com.kosmos.engine.common.network.message.LogLevel
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.impl.ClientInitMessage
-import com.kosmos.engine.common.network.message.impl.LogMessage
-import io.netty.channel.ChannelHandler
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.util.AttributeKey
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-@ChannelHandler.Sharable
-class MultiClientHandler: SimpleChannelInboundHandler<Message>() {
-
-    val clients = ConcurrentHashMap<UUID, DummyClient>()
+class DummyClientHandler(val dummyClientManager: DummyClientManager): SimpleChannelInboundHandler<Message>() {
 
     private val logger = getLogger()
 
@@ -45,7 +38,7 @@ class MultiClientHandler: SimpleChannelInboundHandler<Message>() {
 
         // Track the client within our map.
         val dummyClient = DummyClient(ctx.channel())
-        clients[clientUUID] = dummyClient
+        dummyClientManager.clients[clientUUID] = dummyClient
 
         // Initialize the client with the UUID we assign it.
         val clientInitMessage = ClientInitMessage(clientUUID, Version(KosmosEngine.getInstance().pluginInfo.annotationData.version))
@@ -58,7 +51,7 @@ class MultiClientHandler: SimpleChannelInboundHandler<Message>() {
 
         logger.info("Client disconnected: $uuid")
 
-        clients.remove(uuid)
+        dummyClientManager.clients.remove(uuid)
     }
 
     /**
