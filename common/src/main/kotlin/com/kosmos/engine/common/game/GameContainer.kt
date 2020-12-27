@@ -5,6 +5,7 @@ import com.kosmos.engine.common.entity.EntityDummy
 import com.kosmos.engine.common.event.RegisterEntitiesEvent
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
+import com.kosmos.engine.common.network.message.ctx.GameContext
 import com.kosmos.engine.common.registry.impl.EntityRegistry
 
 /**
@@ -30,6 +31,10 @@ abstract class GameContainer(val networker: Networker) {
         engine.registryManager.addFactoryRegistry(entityRegistry)
 
         engine.eventBus.fire(RegisterEntitiesEvent(entityRegistry))
+
+        networker.contextFactory = {
+            GameContext(this)
+        }
     }
 
     fun getSide(): Side = localSide.get()

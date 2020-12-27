@@ -7,6 +7,7 @@ import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.server.event.ServerBindEvent
 import com.kosmos.engine.server.event.ServerCloseEvent
 import com.kosmos.engine.common.network.message.Message
+import com.kosmos.engine.common.network.message.ctx.MessageContext
 import com.kosmos.engine.common.network.message.decode.MessageDecoder
 import com.kosmos.engine.common.network.message.encode.MessageEncoder
 import io.netty.bootstrap.ServerBootstrap
@@ -77,45 +78,45 @@ class GameServer: Networker(Side.SERVER), AutoCloseable {
         }
     }
 
-    override fun send(message: Message) {
+    override fun send(message: Message<out MessageContext>) {
         logger.warn("Tried to send a message of type '${message::class}' bound for nowhere! Do not use GameServer#send!")
     }
 
 
-    fun sendToClient(message: Message, uuid: UUID) {
+    fun sendToClient(message: Message<out MessageContext>, uuid: UUID) {
         val dummyClient = dummyClientManager.clients[uuid] ?: return
         dummyClient.send(message)
     }
 
-    fun sendToClient(message: Message, dummyClient: DummyClient) {
+    fun sendToClient(message: Message<out MessageContext>, dummyClient: DummyClient) {
         dummyClient.send(message)
     }
 
-    fun sendToClient(message: Message, channel: Channel) {
+    fun sendToClient(message: Message<out MessageContext>, channel: Channel) {
         val uuidAttributeKey = AttributeKey.valueOf<UUID>("uuid")
         val uuid = channel.attr(uuidAttributeKey).get()
         dummyClientManager.clients[uuid]?.send(message)
     }
 
-    fun sendToClients(message: Message, vararg uuids: UUID) {
+    fun sendToClients(message: Message<out MessageContext>, vararg uuids: UUID) {
         uuids.forEach { uuid ->
             sendToClient(message, uuid)
         }
     }
 
-    fun sendToClients(message: Message, vararg dummyClients: DummyClient) {
+    fun sendToClients(message: Message<out MessageContext>, vararg dummyClients: DummyClient) {
         dummyClients.forEach { dummyClient ->
             dummyClient.send(message)
         }
     }
 
-    fun sendToClients(message: Message, vararg channels: Channel) {
+    fun sendToClients(message: Message<out MessageContext>, vararg channels: Channel) {
         channels.forEach { channel ->
             sendToClient(message, channel)
         }
     }
 
-    fun broadcast(message: Message) {
+    fun broadcast(message: Message<out MessageContext>) {
         dummyClientManager.clients.forEach { (_, client) ->
             client.send(message)
         }

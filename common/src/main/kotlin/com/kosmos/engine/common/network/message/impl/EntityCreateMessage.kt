@@ -6,13 +6,14 @@ import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageTarget
+import com.kosmos.engine.common.network.message.ctx.GameContext
 import io.netty.buffer.ByteBuf
 
 /**
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class EntityCreateMessage(): Message(MessageTarget.CLIENT) {
+class EntityCreateMessage(): GameMessage(MessageTarget.CLIENT) {
 
     var entityID: Int = 0
     lateinit var entity: Entity
@@ -53,7 +54,7 @@ class EntityCreateMessage(): Message(MessageTarget.CLIENT) {
         entity.read(buffer)
     }
 
-    override fun handle(networker: Networker) {
+    override fun handle(ctx: GameContext) {
         when(side) {
             Side.CLIENT -> {
                 logger.info("I'm a dummy, I made it to the client in one piece!")

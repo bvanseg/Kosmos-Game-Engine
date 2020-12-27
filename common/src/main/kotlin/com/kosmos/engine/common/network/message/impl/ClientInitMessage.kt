@@ -2,24 +2,23 @@ package com.kosmos.engine.common.network.message.impl
 
 import bvanseg.kotlincommons.project.Version
 import com.kosmos.engine.common.KosmosEngine
-import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageTarget
+import com.kosmos.engine.common.network.message.ctx.MessageContext
+import com.kosmos.engine.common.network.message.ctx.MessageContextImpl
 import com.kosmos.engine.common.network.util.readUUID
 import com.kosmos.engine.common.network.util.readVersion
 import com.kosmos.engine.common.network.util.writeUUID
 import com.kosmos.engine.common.network.util.writeVersion
 import io.netty.buffer.ByteBuf
-import io.netty.channel.Channel
-import io.netty.util.AttributeKey
 import java.util.*
 
 /**
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class ClientInitMessage(): Message(MessageTarget.CLIENT) {
+class ClientInitMessage(): Message<MessageContext>(MessageTarget.CLIENT) {
 
     // The client needs to know their own UUID.
     lateinit var uuid: UUID
@@ -42,7 +41,8 @@ class ClientInitMessage(): Message(MessageTarget.CLIENT) {
         version = buffer.readVersion()
     }
 
-    override fun handle(networker: Networker) {
+    override fun handle(ctx: MessageContext) {
+        val networker = ctx.networker
         if (side == Side.CLIENT) {
             networker.setAttribute("uuid", uuid)
             networker.uuid = uuid

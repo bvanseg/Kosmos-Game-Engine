@@ -7,6 +7,7 @@ import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.server.event.ServerHandleMessageEvent
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
+import com.kosmos.engine.common.network.message.ctx.MessageContext
 import com.kosmos.engine.common.network.message.impl.ClientInitMessage
 import com.kosmos.engine.server.event.ServerClientConnectEvent
 import io.netty.channel.ChannelHandlerContext
@@ -18,7 +19,7 @@ import java.util.*
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class DummyClientInboundHandler(private val dummyClientManager: DummyClientManager): SimpleChannelInboundHandler<Message>() {
+class DummyClientInboundHandler(private val dummyClientManager: DummyClientManager): SimpleChannelInboundHandler<Message<MessageContext>>() {
 
     private val logger = getLogger()
 
@@ -66,7 +67,7 @@ class DummyClientInboundHandler(private val dummyClientManager: DummyClientManag
     /**
      * Fired when a message is received from the client.
      */
-    override fun channelRead0(ctx: ChannelHandlerContext, msg: Message) {
+    override fun channelRead0(ctx: ChannelHandlerContext, msg: Message<MessageContext>) {
         val engine = KosmosEngine.getInstance()
 
         val uuidAttributeKey = AttributeKey.valueOf<UUID>("uuid")
@@ -75,7 +76,7 @@ class DummyClientInboundHandler(private val dummyClientManager: DummyClientManag
         val dummyClient = dummyClientManager.clients[uuid] ?: return
 
         engine.eventBus.fire(ServerHandleMessageEvent.PRE(dummyClient, msg))
-        msg.handle(dummyClient)
+        msg.handle(dummyClient.contextFactory.invoke())
         engine.eventBus.fire(ServerHandleMessageEvent.POST(dummyClient, msg))
 
         dummyClient.messagesReceived.getAndIncrement()

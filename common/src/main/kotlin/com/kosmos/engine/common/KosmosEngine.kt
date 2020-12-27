@@ -7,6 +7,7 @@ import com.kosmos.bootstrapper.plugin.Plugin
 import com.kosmos.bootstrapper.plugin.PluginContainer
 import com.kosmos.bootstrapper.plugin.PluginManager
 import com.kosmos.engine.common.network.message.Message
+import com.kosmos.engine.common.network.message.ctx.MessageContext
 import com.kosmos.engine.common.network.message.impl.ClientInitMessage
 import com.kosmos.engine.common.network.message.impl.EntityCreateMessage
 import com.kosmos.engine.common.network.message.impl.LogMessage
@@ -58,7 +59,7 @@ class KosmosEngine {
     private val logger = getLogger()
 
     val registryManager = RegistryManager()
-    val messageRegistry = registryManager.addFactoryRegistry<Message>()
+    val messageRegistry = registryManager.addFactoryRegistry<Message<out MessageContext>>()
     val networkReadWriteRegistry = registryManager.addInstanceRegistry<KClass<*>, Pair<(ByteBuf) -> Any, (Any, ByteBuf) -> Unit>>()
 
     fun init(event: PluginInitializationEvent) {

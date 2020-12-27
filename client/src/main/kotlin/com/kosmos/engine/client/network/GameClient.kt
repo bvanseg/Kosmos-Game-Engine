@@ -7,6 +7,7 @@ import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
+import com.kosmos.engine.common.network.message.ctx.MessageContext
 import com.kosmos.engine.common.network.message.decode.MessageDecoder
 import com.kosmos.engine.common.network.message.encode.MessageEncoder
 import com.kosmos.engine.common.network.message.impl.PingMessage
@@ -77,7 +78,7 @@ class GameClient: Networker(Side.CLIENT), AutoCloseable {
         }
     }
 
-    override fun send(message: Message) {
+    override fun send(message: Message<out MessageContext>) {
         channel.writeAndFlush(message)
         messagesSent.getAndIncrement()
     }

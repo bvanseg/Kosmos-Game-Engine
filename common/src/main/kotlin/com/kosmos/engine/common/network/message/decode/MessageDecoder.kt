@@ -5,6 +5,7 @@ import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageHeader
+import com.kosmos.engine.common.network.message.ctx.MessageContext
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.ReplayingDecoder
@@ -14,7 +15,7 @@ import io.netty.util.AttributeKey
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class MessageDecoder: ReplayingDecoder<Message>() {
+class MessageDecoder: ReplayingDecoder<Message<MessageContext>>() {
 
     val logger = getLogger()
 

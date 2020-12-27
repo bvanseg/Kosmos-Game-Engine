@@ -5,6 +5,7 @@ import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageHeader
+import com.kosmos.engine.common.network.message.ctx.MessageContext
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelHandlerContext
@@ -16,11 +17,11 @@ import java.util.*
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class MessageEncoder: MessageToByteEncoder<Message>() {
+class MessageEncoder: MessageToByteEncoder<Message<MessageContext>>() {
 
     val logger = getLogger()
 
-    override fun encode(ctx: ChannelHandlerContext, message: Message, out: ByteBuf) {
+    override fun encode(ctx: ChannelHandlerContext, message: Message<MessageContext>, out: ByteBuf) {
         try {
 
             val networkerAttributeKey = AttributeKey.valueOf<Networker>("networker")

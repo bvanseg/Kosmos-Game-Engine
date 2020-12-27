@@ -2,6 +2,7 @@ package com.kosmos.engine.server.event
 
 import com.kosmos.engine.common.event.KosmosEngineEvent
 import com.kosmos.engine.common.network.message.Message
+import com.kosmos.engine.common.network.message.ctx.MessageContext
 import com.kosmos.engine.server.network.DummyClient
 import com.kosmos.engine.server.network.DummyClientManager
 import io.netty.channel.Channel
@@ -24,7 +25,7 @@ open class ServerCloseEvent(val channel: Channel): ServerEvent() {
     class POST(channel: Channel): ServerCloseEvent(channel)
 }
 
-open class ServerHandleMessageEvent(val dummyClient: DummyClient, val message: Message): ServerEvent() {
-    class PRE(dummyClient: DummyClient, message: Message): ServerHandleMessageEvent(dummyClient, message)
-    class POST(dummyClient: DummyClient, message: Message): ServerHandleMessageEvent(dummyClient, message)
+open class ServerHandleMessageEvent(val dummyClient: DummyClient, val message: Message<out MessageContext>): ServerEvent() {
+    class PRE(dummyClient: DummyClient, message: Message<out MessageContext>): ServerHandleMessageEvent(dummyClient, message)
+    class POST(dummyClient: DummyClient, message: Message<out MessageContext>): ServerHandleMessageEvent(dummyClient, message)
 }

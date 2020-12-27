@@ -20,6 +20,8 @@ class AttributeMap(bearer: Any? = null) {
 
     private val backingMap = ConcurrentHashMap<String, Attribute<*>>()
 
+    private val modifiedAttributes = hashSetOf<String>()
+
     fun <T: Any> createAttribute(name: String, value: T): Attribute<T> {
 
         val klazz = value::class
@@ -30,7 +32,8 @@ class AttributeMap(bearer: Any? = null) {
             throw IllegalArgumentException("Attributes may not contain attribute maps!")
         }
 
-        val attribute = Attribute(name, value, klazz, this)
+        val attribute = Attribute(name, value, klazz)
+        attribute.attributeMap = this
 
         backingMap[name] = attribute
 
@@ -132,22 +135,66 @@ class AttributeMap(bearer: Any? = null) {
         }
     }
 
+    fun writeModifiedAttributes(buffer: ByteBuf, clearAttributeChanges: Boolean = true) {
+        val engine = KosmosEngine.getInstance()
+        val registry = engine.networkReadWriteRegistry
+
+        // Write the number of attributes to the buffer.
+        buffer.writeShort(modifiedAttributes.size)
+
+        // Write all of our attributes to the buffer with name first and attribute data following the name.
+        for(attributeName in modifiedAttributes) {
+            val attribute = backingMap[attributeName] ?: continue // TODO: Warn or throw exception
+
+            val type = attribute.type
+
+            // Get write data for attribute type.
+            val readWriteEntry = registry.getEntry(type) ?: continue // TODO: Warn or throw exception
+            val write = readWriteEntry.value.second
+
+            // write Attribute.
+            buffer.writeUTF8String(attribute.name)
+            write(attribute.get(), buffer)
+
+            // write AttributeMutationSchema.
+            val schema = attribute.attributeMutationSchema
+            if(schema != null) {
+                buffer.writeLong(schema.currentLevel)
+            }
+        }
+
+        if(clearAttributeChanges) {
+            modifiedAttributes.clear()
+        }
+    }
+
+    fun notifyAttributeChange(attribute: Attribute<*>) {
+        modifiedAttributes.add(attribute.name)
+    }
+
     override fun toString(): String = backingMap.toString()
 
     /**
      * @author Boston Vanseghi
      * @since 1.0.0
      */
-    data class Attribute<T : Any> constructor(val name: String, private var value: T, val type: KClass<out T>, val attributeMap: AttributeMap) {
+    data class Attribute<T : Any> internal constructor(val name: String, private var value: T, val type: KClass<out T>) {
 
         val initialValue: T = value
 
         var attributeMutationSchema: AttributeMutationSchema<T>? = null
 
+        lateinit var attributeMap: AttributeMap
+
         fun get() = value
 
         fun set(value: T) {
+            val hasChanged = this.value != value
             this.value = value
+
+            if (hasChanged) {
+                attributeMap.notifyAttributeChange(this)
+            }
         }
 
         override fun hashCode(): Int = ((name.hashCode() * 47) + value.hashCode()) * 47

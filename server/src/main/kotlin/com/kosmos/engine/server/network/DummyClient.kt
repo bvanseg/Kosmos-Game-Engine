@@ -3,6 +3,7 @@ package com.kosmos.engine.server.network
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
+import com.kosmos.engine.common.network.message.ctx.MessageContext
 import io.netty.channel.Channel
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
@@ -27,7 +28,7 @@ class DummyClient(
      */
     val timestampConnected: Long): Networker(Side.SERVER) {
 
-    override fun send(message: Message) {
+    override fun send(message: Message<out MessageContext>) {
         channel.writeAndFlush(message)
         messagesSent.getAndIncrement()
     }

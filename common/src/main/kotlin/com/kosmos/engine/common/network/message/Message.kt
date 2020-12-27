@@ -3,6 +3,7 @@ package com.kosmos.engine.common.network.message
 import bvanseg.kotlincommons.any.getLogger
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
+import com.kosmos.engine.common.network.message.ctx.MessageContext
 import io.netty.buffer.ByteBuf
 import io.netty.channel.Channel
 import io.netty.util.AttributeKey
@@ -11,7 +12,7 @@ import io.netty.util.AttributeKey
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-abstract class Message(val targetSide: MessageTarget) {
+abstract class Message<T: MessageContext>(val targetSide: MessageTarget) {
 
     lateinit var header: MessageHeader
     lateinit var side: Side
@@ -20,7 +21,7 @@ abstract class Message(val targetSide: MessageTarget) {
 
     abstract fun read(buffer: ByteBuf)
     abstract fun write(buffer: ByteBuf)
-    abstract fun handle(networker: Networker)
+    abstract fun handle(ctx: T)
 
     fun isCorrectTarget(side: Side): Boolean {
         if (targetSide == MessageTarget.COMMON)

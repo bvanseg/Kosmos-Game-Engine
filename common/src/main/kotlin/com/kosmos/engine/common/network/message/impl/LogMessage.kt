@@ -4,6 +4,7 @@ import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.message.LogLevel
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageTarget
+import com.kosmos.engine.common.network.message.ctx.MessageContextImpl
 import com.kosmos.engine.common.network.util.readEnum
 import com.kosmos.engine.common.network.util.readUTF8String
 import com.kosmos.engine.common.network.util.writeEnum
@@ -15,7 +16,7 @@ import io.netty.channel.Channel
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class LogMessage(): Message(MessageTarget.CLIENT) {
+class LogMessage(): Message<MessageContextImpl>(MessageTarget.CLIENT) {
 
     lateinit var message: String
     var logLevel: LogLevel = LogLevel.INFO
@@ -35,7 +36,7 @@ class LogMessage(): Message(MessageTarget.CLIENT) {
         buffer.writeEnum(logLevel)
     }
 
-    override fun handle(networker: Networker) {
+    override fun handle(ctx: MessageContextImpl) {
         when(logLevel) {
             LogLevel.INFO -> logger.info(message)
             LogLevel.WARN -> logger.warn(message)
