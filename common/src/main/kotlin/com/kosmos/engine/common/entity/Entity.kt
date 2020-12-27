@@ -1,6 +1,7 @@
 package com.kosmos.engine.common.entity
 
 import com.kosmos.engine.common.attribute.AttributeMap
+import io.netty.buffer.ByteBuf
 
 /**
  * @author Boston Vanseghi
@@ -8,4 +9,12 @@ import com.kosmos.engine.common.attribute.AttributeMap
  */
 abstract class Entity {
     val attributeMap = AttributeMap()
+
+    fun write(buffer: ByteBuf) {
+        attributeMap.write(buffer)
+    }
+
+    fun read(buffer: ByteBuf) {
+        attributeMap.read(buffer)
+    }
 }

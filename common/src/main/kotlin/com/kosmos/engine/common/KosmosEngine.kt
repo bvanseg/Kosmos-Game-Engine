@@ -8,9 +8,14 @@ import com.kosmos.bootstrapper.plugin.PluginContainer
 import com.kosmos.bootstrapper.plugin.PluginManager
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.impl.ClientInitMessage
+import com.kosmos.engine.common.network.message.impl.EntityCreateMessage
 import com.kosmos.engine.common.network.message.impl.LogMessage
 import com.kosmos.engine.common.network.message.impl.PingMessage
+import com.kosmos.engine.common.network.util.*
 import com.kosmos.engine.common.registry.RegistryManager
+import io.netty.buffer.ByteBuf
+import org.joml.*
+import kotlin.reflect.KClass
 
 /**
  * @author Boston Vanseghi
@@ -52,8 +57,9 @@ class KosmosEngine {
      */
     private val logger = getLogger()
 
-    private val registryManager = RegistryManager()
+    val registryManager = RegistryManager()
     val messageRegistry = registryManager.addFactoryRegistry<Message>()
+    val networkReadWriteRegistry = registryManager.addInstanceRegistry<KClass<*>, Pair<(ByteBuf) -> Any, (Any, ByteBuf) -> Unit>>()
 
     fun init(event: PluginInitializationEvent) {
         logger.info("Initializing Kosmos Engine...")
@@ -63,6 +69,38 @@ class KosmosEngine {
         messageRegistry.register(ClientInitMessage::class)
         messageRegistry.register(LogMessage::class)
         messageRegistry.register(PingMessage::class)
+
+        messageRegistry.register(EntityCreateMessage::class)
+
+        /** network write registry **/
+
+        networkReadWriteRegistry.register(Byte::class, Pair({ byteBuf -> byteBuf.readByte() }, { value, byteBuf -> byteBuf.writeByte((value as Byte).toInt()) }))
+        networkReadWriteRegistry.register(Short::class, Pair({ byteBuf -> byteBuf.readShort() }, { value, byteBuf -> byteBuf.writeShort((value as Short).toInt()) }))
+        networkReadWriteRegistry.register(Int::class, Pair({ byteBuf -> byteBuf.readInt() }, { value, byteBuf -> byteBuf.writeInt(value as Int) }))
+        networkReadWriteRegistry.register(Long::class, Pair({ byteBuf -> byteBuf.readLong() }, { value, byteBuf -> byteBuf.writeLong(value as Long) }))
+
+        networkReadWriteRegistry.register(String::class, Pair({ byteBuf -> byteBuf.readUTF8String() }, { value, byteBuf -> byteBuf.writeUTF8String(value as String) }))
+
+        networkReadWriteRegistry.register(Vector2ic::class, Pair({ byteBuf -> byteBuf.readVector2ic() }, { value, byteBuf -> byteBuf.writeVector2ic(value as Vector2ic) }))
+        networkReadWriteRegistry.register(Vector2fc::class, Pair({ byteBuf -> byteBuf.readVector2fc() }, { value, byteBuf -> byteBuf.writeVector2fc(value as Vector2fc) }))
+        networkReadWriteRegistry.register(Vector2dc::class, Pair({ byteBuf -> byteBuf.readVector2dc() }, { value, byteBuf -> byteBuf.writeVector2dc(value as Vector2dc) }))
+
+        networkReadWriteRegistry.register(Vector3ic::class, Pair({ byteBuf -> byteBuf.readVector3ic() }, { value, byteBuf -> byteBuf.writeVector3ic(value as Vector3ic) }))
+        networkReadWriteRegistry.register(Vector3fc::class, Pair({ byteBuf -> byteBuf.readVector3fc() }, { value, byteBuf -> byteBuf.writeVector3fc(value as Vector3fc) }))
+        networkReadWriteRegistry.register(Vector3dc::class, Pair({ byteBuf -> byteBuf.readVector3dc() }, { value, byteBuf -> byteBuf.writeVector3dc(value as Vector3dc) }))
+
+        networkReadWriteRegistry.register(Vector4ic::class, Pair({ byteBuf -> byteBuf.readVector4ic() }, { value, byteBuf -> byteBuf.writeVector4ic(value as Vector4ic) }))
+        networkReadWriteRegistry.register(Vector4fc::class, Pair({ byteBuf -> byteBuf.readVector4fc() }, { value, byteBuf -> byteBuf.writeVector4fc(value as Vector4fc) }))
+        networkReadWriteRegistry.register(Vector4dc::class, Pair({ byteBuf -> byteBuf.readVector4dc() }, { value, byteBuf -> byteBuf.writeVector4dc(value as Vector4dc) }))
+
+        networkReadWriteRegistry.register(Matrix2fc::class, Pair({ byteBuf -> byteBuf.readMatrix2fc() }, { value, byteBuf -> byteBuf.writeMatrix2fc(value as Matrix2fc) }))
+        networkReadWriteRegistry.register(Matrix2dc::class, Pair({ byteBuf -> byteBuf.readMatrix2dc() }, { value, byteBuf -> byteBuf.writeMatrix2dc(value as Matrix2dc) }))
+
+        networkReadWriteRegistry.register(Matrix3fc::class, Pair({ byteBuf -> byteBuf.readMatrix3fc() }, { value, byteBuf -> byteBuf.writeMatrix3fc(value as Matrix3fc) }))
+        networkReadWriteRegistry.register(Matrix3dc::class, Pair({ byteBuf -> byteBuf.readMatrix3dc() }, { value, byteBuf -> byteBuf.writeMatrix3dc(value as Matrix3dc) }))
+
+        networkReadWriteRegistry.register(Matrix4fc::class, Pair({ byteBuf -> byteBuf.readMatrix4fc() }, { value, byteBuf -> byteBuf.writeMatrix4fc(value as Matrix4fc) }))
+        networkReadWriteRegistry.register(Matrix4dc::class, Pair({ byteBuf -> byteBuf.readMatrix4dc() }, { value, byteBuf -> byteBuf.writeMatrix4dc(value as Matrix4dc) }))
 
         logger.info("Finished initializing Kosmos Engine in ${System.currentTimeMillis() - start}ms")
     }

@@ -2,6 +2,8 @@ package com.kosmos.engine.server.network
 
 import bvanseg.kotlincommons.any.getLogger
 import com.kosmos.engine.common.KosmosEngine
+import com.kosmos.engine.common.network.Networker
+import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.server.event.ServerBindEvent
 import com.kosmos.engine.server.event.ServerCloseEvent
 import com.kosmos.engine.common.network.message.Message
@@ -22,9 +24,10 @@ import java.util.*
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class GameServer: AutoCloseable {
+class GameServer: Networker(Side.SERVER), AutoCloseable {
 
-    private lateinit var channel: Channel
+    override var uuid: UUID = UUID.randomUUID()
+    override lateinit var channel: Channel
 
     // Accepts connections from clients
     private val bossGroup = NioEventLoopGroup(1)
@@ -73,6 +76,11 @@ class GameServer: AutoCloseable {
             engine.eventBus.fire(ServerCloseEvent.POST(channel))
         }
     }
+
+    override fun send(message: Message) {
+        logger.warn("Tried to send a message of type '${message::class}' bound for nowhere! Do not use GameServer#send!")
+    }
+
 
     fun sendToClient(message: Message, uuid: UUID) {
         val dummyClient = dummyClientManager.clients[uuid] ?: return

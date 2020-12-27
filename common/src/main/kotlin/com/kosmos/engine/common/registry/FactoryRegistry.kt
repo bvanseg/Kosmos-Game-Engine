@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class FactoryRegistry<T : Any>(val factory: (FactoryRegistryEntry<T>) -> T?): Registry<KClass<out T>, T>() {
+open class FactoryRegistry<T : Any>(val factory: (FactoryRegistryEntry<T>) -> T?): Registry<KClass<out T>, T>() {
 
     private val logger = getLogger()
 
@@ -40,4 +40,6 @@ class FactoryRegistry<T : Any>(val factory: (FactoryRegistryEntry<T>) -> T?): Re
 
     fun getIDFor(klass: KClass<out T>): Int = klass.simpleName.hashCode()
     fun getIDFor(obj: T) = getIDFor(obj::class)
+
+    open fun onCreateInstance(instance: T?) = Unit
 }

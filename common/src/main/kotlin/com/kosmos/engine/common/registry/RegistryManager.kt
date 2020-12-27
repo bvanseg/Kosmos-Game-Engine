@@ -12,8 +12,6 @@ open class RegistryManager {
 
     val logger = getLogger()
 
-    private var hasInitialized = false
-
     @PublishedApi
     internal val registries = hashMapOf<KClass<*>, Registry<*, *>>()
 
@@ -33,6 +31,12 @@ open class RegistryManager {
         val newRegistry = FactoryRegistry(factory = factory)
         registries[T::class] = newRegistry
         return newRegistry
+    }
+
+    inline fun <reified T : Any> addFactoryRegistry(factoryRegistry: FactoryRegistry<T>): FactoryRegistry<T> {
+        logger.info("Creating new registry for type: ${T::class}")
+        registries[T::class] = factoryRegistry
+        return factoryRegistry
     }
 
     inline fun <reified T: Any> getFactoryRegistry() = registries[T::class] as FactoryRegistry<T>? ?: throw IllegalStateException("Attempted to get a registry that does not exist: ${T::class}")
