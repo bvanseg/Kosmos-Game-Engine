@@ -5,11 +5,15 @@ import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.game.GameContainer
 
 fun main() {
+    val engine = KosmosEngine()
     // Initialize engine
-    KosmosEngine().init(PluginInitializationEvent())
+    engine.init(PluginInitializationEvent())
+
+    engine.eventBus.addListener(ClientListener)
 
     // Create client
     val client = GameClient()
+
 
     val gameContainer = object: GameContainer(client) {
         override fun init() {

@@ -2,6 +2,7 @@ package com.kosmos.engine.common.game
 
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.entity.EntityDummy
+import com.kosmos.engine.common.event.RegisterEntitiesEvent
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.registry.impl.EntityRegistry
@@ -23,10 +24,12 @@ abstract class GameContainer(val networker: Networker) {
         // Set the side of the game container
         localSide.set(networker.side)
 
-        // Append
-        KosmosEngine.getInstance().registryManager.addFactoryRegistry(entityRegistry)
+        val engine = KosmosEngine.getInstance()
 
-        entityRegistry.register(EntityDummy::class)
+        // Append
+        engine.registryManager.addFactoryRegistry(entityRegistry)
+
+        engine.eventBus.fire(RegisterEntitiesEvent(entityRegistry))
     }
 
     fun getSide(): Side = localSide.get()

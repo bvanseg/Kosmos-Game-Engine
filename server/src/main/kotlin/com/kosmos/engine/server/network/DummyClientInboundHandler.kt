@@ -8,6 +8,7 @@ import com.kosmos.engine.server.event.ServerHandleMessageEvent
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.impl.ClientInitMessage
+import com.kosmos.engine.server.event.ServerClientConnectEvent
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.util.AttributeKey
@@ -25,7 +26,9 @@ class DummyClientInboundHandler(private val dummyClientManager: DummyClientManag
      * Fired when a client connects.
      */
     override fun channelActive(ctx: ChannelHandlerContext) {
+        val engine = KosmosEngine.getInstance()
 
+        engine.eventBus.fire(ServerClientConnectEvent.PRE(dummyClientManager, ctx))
         // Set a UUID for the client.
         val uuidAttributeKey = AttributeKey.valueOf<UUID>("uuid")
         ctx.channel().attr(uuidAttributeKey).set(UUID.randomUUID())
@@ -47,6 +50,8 @@ class DummyClientInboundHandler(private val dummyClientManager: DummyClientManag
         // Initialize the client with the UUID we assign it.
         val clientInitMessage = ClientInitMessage(clientUUID, Version(KosmosEngine.getInstance().pluginInfo.annotationData.version))
         dummyClient.send(clientInitMessage)
+
+        engine.eventBus.fire(ServerClientConnectEvent.POST(dummyClientManager, ctx, dummyClient))
     }
 
     override fun channelInactive(ctx: ChannelHandlerContext) {
