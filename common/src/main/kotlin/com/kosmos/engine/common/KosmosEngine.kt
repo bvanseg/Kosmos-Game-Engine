@@ -13,6 +13,8 @@ import com.kosmos.engine.common.network.util.*
 import com.kosmos.engine.common.registry.RegistryManager
 import io.netty.buffer.ByteBuf
 import org.joml.*
+import java.math.BigDecimal
+import java.math.BigInteger
 import kotlin.reflect.KClass
 
 /**
@@ -80,6 +82,9 @@ class KosmosEngine {
 
         networkReadWriteRegistry.register(Float::class, Pair({ byteBuf -> byteBuf.readFloat() }, { value, byteBuf -> byteBuf.writeFloat(value as Float) }))
         networkReadWriteRegistry.register(Double::class, Pair({ byteBuf -> byteBuf.readDouble() }, { value, byteBuf -> byteBuf.writeDouble(value as Double) }))
+
+        networkReadWriteRegistry.register(BigInteger::class, Pair({ byteBuf -> byteBuf.readBigInteger() }, { value, byteBuf -> byteBuf.writeBigInteger(value as BigInteger) }))
+        networkReadWriteRegistry.register(BigDecimal::class, Pair({ byteBuf -> byteBuf.readBigDecimal() }, { value, byteBuf -> byteBuf.writeBigDecimal(value as BigDecimal) }))
 
         networkReadWriteRegistry.register(String::class, Pair({ byteBuf -> byteBuf.readUTF8String() }, { value, byteBuf -> byteBuf.writeUTF8String(value as String) }))
 

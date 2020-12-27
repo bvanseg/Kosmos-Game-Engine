@@ -3,8 +3,38 @@ package com.kosmos.engine.common.network.util
 import bvanseg.kotlincommons.project.Version
 import io.netty.buffer.ByteBuf
 import org.joml.*
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.nio.charset.StandardCharsets
 import java.util.*
+
+fun ByteBuf.writeBigInteger(bigInt: BigInteger) {
+    val array = bigInt.toByteArray()
+    this.writeShort(array.size)
+    this.writeBytes(array)
+}
+
+fun ByteBuf.readBigInteger(): BigInteger {
+    val length = this.readShort().toInt()
+    val byteArray = ByteArray(length)
+    this.readBytes(byteArray, 0, length)
+    return BigInteger(byteArray)
+}
+
+fun ByteBuf.writeBigDecimal(bigDec: BigDecimal) {
+    val array = bigDec.unscaledValue().toByteArray()
+    this.writeShort(array.size)
+    this.writeBytes(array)
+    this.writeInt(bigDec.scale())
+}
+
+fun ByteBuf.readBigDecimal(): BigDecimal {
+    val length = this.readShort().toInt()
+    val byteArray = ByteArray(length)
+    this.readBytes(byteArray, 0, length)
+    val scale = this.readInt()
+    return BigDecimal(BigInteger(byteArray), scale)
+}
 
 fun ByteBuf.writeUTF8String(string: String) {
     this.writeShort(string.length)
