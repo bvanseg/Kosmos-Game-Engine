@@ -1,6 +1,7 @@
 package com.kosmos.engine.common.attribute
 
 import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.string.ToStringBuilder
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.util.readUTF8String
 import com.kosmos.engine.common.network.util.writeUTF8String
@@ -12,17 +13,19 @@ import kotlin.reflect.KClass
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class AttributeMap(bearer: Any? = null) {
+class AttributeMap(val bearer: Any? = null) {
 
     companion object {
         val logger = getLogger()
     }
 
-    private val backingMap = ConcurrentHashMap<String, Attribute<*>>()
+    private val backingMap = ConcurrentHashMap<String, Attribute<Any>>()
 
     private val modifiedAttributes = hashSetOf<String>()
 
-    fun addAttribute(attribute: Attribute<*>) {
+    private var hasModifiedAttributes = false
+
+    fun addAttribute(attribute: Attribute<Any>) {
         backingMap[attribute.name] = attribute
         attribute.attributeMap = this
     }
@@ -40,7 +43,7 @@ class AttributeMap(bearer: Any? = null) {
         val attribute = Attribute(name, value, klazz)
         attribute.attributeMap = this
 
-        backingMap[name] = attribute
+        backingMap[name] = attribute as Attribute<Any>
 
         return attribute
     }
@@ -55,18 +58,6 @@ class AttributeMap(bearer: Any? = null) {
 
     fun clearAttributes() = backingMap.clear()
 
-    fun upgrade() {
-        backingMap.forEach { (_, attribute) ->
-            attribute.attributeMutationSchema?.upgrade()
-        }
-    }
-
-    fun downgrade() {
-        backingMap.forEach { (_, attribute) ->
-            attribute.attributeMutationSchema?.downgrade()
-        }
-    }
-
     fun write(buffer: ByteBuf) {
         val engine = KosmosEngine.getInstance()
         val registry = engine.networkReadWriteRegistry
@@ -79,18 +70,16 @@ class AttributeMap(bearer: Any? = null) {
             val type = attribute.type
 
             // Get write data for attribute type.
-            val readWriteEntry = registry.getEntry(type) ?: continue // TODO: Warn or throw exception
+            val readWriteEntry = registry.getEntry(type)
+                ?: throw RuntimeException("Failed to get read/write entry for type '$type'")
+
             val write = readWriteEntry.value.second
 
             // write Attribute.
             buffer.writeUTF8String(attribute.name)
+            val attributeTypeID = registry.getIDForKey(type) ?: throw RuntimeException("Attribute type is not registered: $type")
+            buffer.writeInt(attributeTypeID)
             write(attribute.get(), buffer)
-
-            // write AttributeMutationSchema.
-            val schema = attribute.attributeMutationSchema
-            if(schema != null) {
-                buffer.writeLong(schema.currentLevel)
-            }
         }
     }
 
@@ -102,10 +91,8 @@ class AttributeMap(bearer: Any? = null) {
 
         for(i in 0 until attributeCount) {
             val name = buffer.readUTF8String()
-
-            val attribute = (backingMap[name] ?: return) as Attribute<Any>
-
-            val type = attribute.type
+            val attributeTypeID = buffer.readInt()
+            val type = registry.getKeyByID(attributeTypeID) ?: throw RuntimeException("Failed to get key for attribute type using id $attributeTypeID")
 
             // Get read data for attribute type.
             val readWriteEntry = registry.getEntry(type)
@@ -120,27 +107,7 @@ class AttributeMap(bearer: Any? = null) {
             // read Attribute properties.
             val value = read(buffer)
 
-            // Set Attribute to value from buffer.
-            attribute.set(value)
-
-            // Read AttributeMutationSchema data.
-            val schema = attribute.attributeMutationSchema
-            if(schema != null) {
-                val currentLevel = buffer.readLong()
-
-                // We need to upgrade/downgrade up until the current level of the schema.
-                // We must do this because not all schemas use level to calculate current value (some follow algorithms
-                // using nothing but the base value, so we must take each step through those algorithms).
-                if (schema.currentLevel < currentLevel) {
-                    while (schema.currentLevel < currentLevel) {
-                        schema.upgrade()
-                    }
-                } else if (schema.currentLevel > currentLevel) {
-                    while (schema.currentLevel > currentLevel) {
-                        schema.downgrade()
-                    }
-                }
-            }
+            createAttribute(name, value)
         }
     }
 
@@ -153,33 +120,38 @@ class AttributeMap(bearer: Any? = null) {
 
         // Write all of our attributes to the buffer with name first and attribute data following the name.
         for(attributeName in modifiedAttributes) {
-            val attribute = backingMap[attributeName] ?: continue // TODO: Warn or throw exception
+            val attribute = backingMap[attributeName] ?: continue
 
             val type = attribute.type
 
             // Get write data for attribute type.
-            val readWriteEntry = registry.getEntry(type) ?: continue // TODO: Warn or throw exception
+            val readWriteEntry = registry.getEntry(type)
+                ?: throw RuntimeException("Failed to get read/write entry for type '$type'")
+
             val write = readWriteEntry.value.second
 
             // write Attribute.
             buffer.writeUTF8String(attribute.name)
+            val attributeTypeID = registry.getIDForKey(type) ?: throw RuntimeException("Attribute type is not registered: $type")
+            buffer.writeInt(attributeTypeID)
             write(attribute.get(), buffer)
-
-            // write AttributeMutationSchema.
-            val schema = attribute.attributeMutationSchema
-            if(schema != null) {
-                buffer.writeLong(schema.currentLevel)
-            }
         }
 
         if(clearAttributeChanges) {
             modifiedAttributes.clear()
+            hasModifiedAttributes = false
         }
     }
 
     fun notifyAttributeChange(attribute: Attribute<*>) {
         modifiedAttributes.add(attribute.name)
+
+        if (!hasModifiedAttributes) {
+            hasModifiedAttributes = true
+        }
     }
+
+    fun hasModifiedAttributes() = hasModifiedAttributes
 
     /**
      * Merges the given [AttributeMap] into this AttributeMap.
@@ -202,8 +174,6 @@ class AttributeMap(bearer: Any? = null) {
     data class Attribute<T : Any> internal constructor(val name: String, private var value: T, val type: KClass<out T>) {
 
         val initialValue: T = value
-
-        var attributeMutationSchema: AttributeMutationSchema<T>? = null
 
         lateinit var attributeMap: AttributeMap
 

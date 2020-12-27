@@ -5,14 +5,15 @@ import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.ctx.MessageContext
 import com.kosmos.engine.server.network.DummyClient
 import com.kosmos.engine.server.network.DummyClientManager
+import com.kosmos.engine.server.network.GameServer
 import io.netty.channel.Channel
 import io.netty.channel.ChannelHandlerContext
 
 open class ServerEvent: KosmosEngineEvent()
 
-open class ServerBindEvent: ServerEvent() {
-    class PRE: ServerBindEvent()
-    class POST(val channel: Channel, val host: String, val port: Int): ServerBindEvent()
+open class ServerBindEvent(val gameServer: GameServer): ServerEvent() {
+    class PRE(gameServer: GameServer): ServerBindEvent(gameServer)
+    class POST(gameServer: GameServer, val host: String, val port: Int): ServerBindEvent(gameServer)
 }
 
 open class ServerClientConnectEvent(val dummyClientManager: DummyClientManager): ServerEvent() {

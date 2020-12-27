@@ -3,7 +3,7 @@ package com.kosmos.engine.common.network.message.impl
 import com.kosmos.engine.common.network.message.LogLevel
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageTarget
-import com.kosmos.engine.common.network.message.ctx.MessageContextImpl
+import com.kosmos.engine.common.network.message.ctx.MessageContext
 import com.kosmos.engine.common.network.util.readEnum
 import com.kosmos.engine.common.network.util.readUTF8String
 import com.kosmos.engine.common.network.util.writeEnum
@@ -14,7 +14,7 @@ import io.netty.buffer.ByteBuf
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class LogMessage(): Message<MessageContextImpl>(MessageTarget.CLIENT) {
+class LogMessage(): Message<MessageContext>(MessageTarget.CLIENT) {
 
     lateinit var message: String
     var logLevel: LogLevel = LogLevel.INFO
@@ -34,7 +34,7 @@ class LogMessage(): Message<MessageContextImpl>(MessageTarget.CLIENT) {
         buffer.writeEnum(logLevel)
     }
 
-    override fun handle(ctx: MessageContextImpl) {
+    override fun handle(ctx: MessageContext) {
         when(logLevel) {
             LogLevel.INFO -> logger.info(message)
             LogLevel.WARN -> logger.warn(message)

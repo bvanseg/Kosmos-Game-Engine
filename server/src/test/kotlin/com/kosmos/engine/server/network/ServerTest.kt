@@ -13,14 +13,9 @@ fun main() {
     val engine = KosmosEngine()
     engine.init(PluginInitializationEvent())
 
-    engine.eventBus.addListener(ServerListener)
-
     val server = GameServer()
 
     val gameContainer = object: GameContainer(server) {
-        override fun init() {
-            TODO("Not yet implemented")
-        }
 
         override fun update() {
             TODO("Not yet implemented")
@@ -29,8 +24,11 @@ fun main() {
         override fun dispose() {
             TODO("Not yet implemented")
         }
-
     }
+
+    engine.eventBus.addListener(ServerListener(gameContainer))
+
+    gameContainer.init()
 
     server.bind("127.0.0.1", 2323)
 }

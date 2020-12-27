@@ -6,7 +6,7 @@ package com.kosmos.engine.common.entity
  */
 class EntityDummy: Entity() {
 
-    init {
-        attributeMap.createAttribute("health", 100)
-    }
+    val health      = attributeMap.createAttribute("health", 100)
+    val shields     = attributeMap.createAttribute("shields", 100)
+    val energy      = attributeMap.createAttribute("energy", 100)
 }

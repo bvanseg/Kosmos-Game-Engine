@@ -8,10 +8,7 @@ import com.kosmos.bootstrapper.plugin.PluginContainer
 import com.kosmos.bootstrapper.plugin.PluginManager
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.ctx.MessageContext
-import com.kosmos.engine.common.network.message.impl.ClientInitMessage
-import com.kosmos.engine.common.network.message.impl.EntityCreateMessage
-import com.kosmos.engine.common.network.message.impl.LogMessage
-import com.kosmos.engine.common.network.message.impl.PingMessage
+import com.kosmos.engine.common.network.message.impl.*
 import com.kosmos.engine.common.network.util.*
 import com.kosmos.engine.common.registry.RegistryManager
 import io.netty.buffer.ByteBuf
@@ -72,6 +69,7 @@ class KosmosEngine {
         messageRegistry.register(PingMessage::class)
 
         messageRegistry.register(EntityCreateMessage::class)
+        messageRegistry.register(AttributeUpdateMessage::class)
 
         /** network write registry **/
 

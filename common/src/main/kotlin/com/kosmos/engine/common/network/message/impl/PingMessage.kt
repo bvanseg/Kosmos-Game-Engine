@@ -3,26 +3,26 @@ package com.kosmos.engine.common.network.message.impl
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageTarget
-import com.kosmos.engine.common.network.message.ctx.MessageContextImpl
+import com.kosmos.engine.common.network.message.ctx.MessageContext
 import io.netty.buffer.ByteBuf
 
 /**
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class PingMessage: Message<MessageContextImpl>(MessageTarget.COMMON) {
+class PingMessage: Message<MessageContext>(MessageTarget.COMMON) {
 
-    private var timestamp: Long = 0L
+    private var timestamp: Long = System.currentTimeMillis()
 
     override fun write(buffer: ByteBuf) {
-        buffer.writeLong(System.currentTimeMillis())
+        buffer.writeLong(timestamp)
     }
 
     override fun read(buffer: ByteBuf) {
         timestamp = buffer.readLong()
     }
 
-    override fun handle(ctx: MessageContextImpl) {
+    override fun handle(ctx: MessageContext) {
         when (side) {
             Side.CLIENT -> {
                 logger.debug("Ping: ${System.currentTimeMillis() - timestamp}ms")

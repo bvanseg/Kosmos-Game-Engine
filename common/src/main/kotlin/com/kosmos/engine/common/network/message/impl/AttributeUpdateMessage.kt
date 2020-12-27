@@ -25,8 +25,11 @@ class AttributeUpdateMessage(): GameMessage(MessageTarget.CLIENT) {
 
     override fun write(buffer: ByteBuf) {
         buffer.writeUUID(entityUUID)
+        logger.debug("Written attribute map: $attributeMap")
         attributeMap.writeModifiedAttributes(buffer)
     }
+
+    lateinit var buf: ByteBuf
 
     override fun read(buffer: ByteBuf) {
         entityUUID = buffer.readUUID()
@@ -37,6 +40,8 @@ class AttributeUpdateMessage(): GameMessage(MessageTarget.CLIENT) {
     override fun handle(ctx: GameContext) {
         val entity = ctx.gameContainer.entities[entityUUID] ?: return // TODO: log warning or exception here
         // The updated attributes override the attributes in the entity's current map.
+        logger.debug("Updating entity attribute map: ${entity.attributeMap}")
         entity.attributeMap.merge(attributeMap)
+        logger.debug("Finished updating entity attribute map: ${entity.attributeMap}")
     }
 }

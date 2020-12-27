@@ -1,6 +1,7 @@
 package com.kosmos.engine.common.registry
 
 import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.collection.DualHashMap
 import kotlin.reflect.KClass
 
 /**
@@ -9,9 +10,12 @@ import kotlin.reflect.KClass
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class InstanceRegistry<K, V : Any>: Registry<K, V>() {
+class InstanceRegistry<K : Any, V : Any>: Registry<K, V>() {
 
     private val logger = getLogger()
+
+    private val idToKeyMap = DualHashMap<Int, K>()
+    private val keyToIDMap = idToKeyMap.reverse()
 
     fun register(key: K, value: V) {
         val entry = InstanceRegistryEntry(this, value)
@@ -20,8 +24,12 @@ class InstanceRegistry<K, V : Any>: Registry<K, V>() {
             throw IllegalStateException("Attempted to register an entry that already exists: $value")
         }
 
-
         entries[key] = entry
+
+        when (key) {
+            is KClass<*> -> idToKeyMap[key.simpleName.hashCode()] = key
+            else -> idToKeyMap[key.hashCode()] = key
+        }
 
         logger.info("Successfully registered entry $value")
     }
@@ -31,5 +39,7 @@ class InstanceRegistry<K, V : Any>: Registry<K, V>() {
         logger.info("Successfully unregistered entry $value")
     }
 
+    fun getKeyByID(id: Int) = idToKeyMap[id]
+    fun getIDForKey(key: K) = keyToIDMap[key]
     fun getEntry(key: K) = entries[key] as InstanceRegistryEntry?
 }

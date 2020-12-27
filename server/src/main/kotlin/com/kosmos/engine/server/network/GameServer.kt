@@ -10,6 +10,8 @@ import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.ctx.MessageContext
 import com.kosmos.engine.common.network.message.decode.MessageDecoder
 import com.kosmos.engine.common.network.message.encode.MessageEncoder
+import com.kosmos.engine.common.network.message.impl.EntityCreateMessage
+import com.kosmos.engine.common.network.message.impl.PingMessage
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.Channel
 import io.netty.channel.ChannelInitializer
@@ -61,12 +63,12 @@ class GameServer: Networker(Side.SERVER), AutoCloseable {
                 })
 
             logger.info("Attempting to bind server to $host:$port...")
-            engine.eventBus.fire(ServerBindEvent.PRE())
+            engine.eventBus.fire(ServerBindEvent.PRE(this))
             val channelFuture: ChannelFuture = bootstrap.bind(InetSocketAddress(host, port)).sync()
             logger.info("Successfully bound server to $host:$port")
 
             channel = channelFuture.channel()
-            engine.eventBus.fire(ServerBindEvent.POST(channel, host, port))
+            engine.eventBus.fire(ServerBindEvent.POST(this, host, port))
 
             // Wait until the server socket is closed.
             channelFuture.channel().closeFuture().sync()
@@ -78,10 +80,7 @@ class GameServer: Networker(Side.SERVER), AutoCloseable {
         }
     }
 
-    override fun send(message: Message<out MessageContext>) {
-        logger.warn("Tried to send a message of type '${message::class}' bound for nowhere! Do not use GameServer#send!")
-    }
-
+    override fun send(message: Message<out MessageContext>) = broadcast(message)
 
     fun sendToClient(message: Message<out MessageContext>, uuid: UUID) {
         val dummyClient = dummyClientManager.clients[uuid] ?: return

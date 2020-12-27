@@ -14,11 +14,7 @@ fun main() {
     // Create client
     val client = GameClient()
 
-
     val gameContainer = object: GameContainer(client) {
-        override fun init() {
-            TODO("Not yet implemented")
-        }
 
         override fun update() {
             TODO("Not yet implemented")
@@ -29,6 +25,8 @@ fun main() {
         }
 
     }
+
+    gameContainer.init()
 
     // Connect to server
     client.connect("127.0.0.1", 2323)

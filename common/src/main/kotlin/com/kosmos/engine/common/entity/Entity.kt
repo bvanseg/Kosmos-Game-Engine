@@ -1,6 +1,8 @@
 package com.kosmos.engine.common.entity
 
 import com.kosmos.engine.common.attribute.AttributeMap
+import com.kosmos.engine.common.game.GameContainer
+import com.kosmos.engine.common.network.message.impl.AttributeUpdateMessage
 import com.kosmos.engine.common.network.util.readUUID
 import com.kosmos.engine.common.network.util.writeUUID
 import io.netty.buffer.ByteBuf
@@ -17,6 +19,8 @@ abstract class Entity {
 
     val attributeMap by lazy { AttributeMap(this) }
 
+    internal lateinit var gameContainer: GameContainer
+
     fun write(buffer: ByteBuf) {
         buffer.writeUUID(uuid)
         attributeMap.write(buffer)
@@ -25,5 +29,11 @@ abstract class Entity {
     fun read(buffer: ByteBuf) {
         uuid = buffer.readUUID()
         attributeMap.read(buffer)
+    }
+
+    open fun update() {
+        if (attributeMap.hasModifiedAttributes()) {
+            gameContainer.networker.send(AttributeUpdateMessage(this))
+        }
     }
 }

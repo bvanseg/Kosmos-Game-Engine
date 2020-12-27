@@ -3,15 +3,18 @@ package com.kosmos.engine.server.network
 import bvanseg.kotlincommons.evenir.annotation.SubscribeEvent
 import com.kosmos.engine.common.entity.EntityDummy
 import com.kosmos.engine.common.event.RegisterEntitiesEvent
+import com.kosmos.engine.common.game.GameContainer
 import com.kosmos.engine.common.network.message.impl.EntityCreateMessage
+import com.kosmos.engine.common.network.message.impl.PingMessage
 import com.kosmos.engine.server.event.ServerBindEvent
 import com.kosmos.engine.server.event.ServerClientConnectEvent
+import java.util.*
 
 /**
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-object ServerListener {
+class ServerListener(val gameContainer: GameContainer) {
 
     @SubscribeEvent
     fun onEntitiesRegister(event: RegisterEntitiesEvent) {
@@ -29,6 +32,38 @@ object ServerListener {
     @SubscribeEvent
     fun onServerBind(event: ServerBindEvent.POST) {
         println("Received server bind event!")
-        //exitProcess(0)
+
+        val scanner = Scanner(System.`in`)
+
+        val dummy = gameContainer.createEntity<EntityDummy>()
+
+        while(scanner.hasNext()) {
+            val input = scanner.nextLine()
+
+            when(input) {
+                "exit" -> {
+                    println("exiting input loop...")
+                    break
+                }
+                "ping" -> {
+                    println("pinging...")
+                    event.gameServer.broadcast(PingMessage())
+                }
+                "entity" -> {
+                    println("sending dummy entity...")
+                    val entityCreateMessage = EntityCreateMessage(dummy)
+                    event.gameServer.broadcast(entityCreateMessage)
+                }
+                "level" -> {
+                    println("upgrading dummy entity...")
+                    val health = dummy.attributeMap.getAttribute<Int>("health")
+                    health?.set(health.get() + 10)
+                }
+                "update" -> {
+                    println("updating dummy entity...")
+                    dummy.update()
+                }
+            }
+        }
     }
 }

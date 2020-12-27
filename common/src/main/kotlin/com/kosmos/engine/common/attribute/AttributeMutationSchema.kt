@@ -1,5 +1,7 @@
 package com.kosmos.engine.common.attribute
 
+import bvanseg.kotlincommons.string.ToStringBuilder
+
 /**
  * @author Boston Vanseghi
  * @since 1.0.0
@@ -33,4 +35,10 @@ open class AttributeMutationSchema<T : Any>(private val attribute: AttributeMap.
     fun setDowngradeSchema(downgrade: (AttributeMap.Attribute<T>) -> Unit) {
         this.downgrade = downgrade
     }
+
+    override fun toString(): String = ToStringBuilder.builder(this::class)
+        .append("minLevel", minLevel)
+        .append("currentLevel", currentLevel)
+        .append("maxLevel", maxLevel)
+        .toString()
 }

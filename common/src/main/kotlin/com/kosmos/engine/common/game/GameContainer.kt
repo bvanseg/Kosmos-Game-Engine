@@ -21,11 +21,16 @@ abstract class GameContainer(val networker: Networker) {
      */
     private val localSide = InheritableThreadLocal<Side>()
 
-    protected val entityRegistry = EntityRegistry(networker)
+    val entityRegistry = EntityRegistry(this)
 
     val entities = ConcurrentHashMap<UUID, Entity>()
 
-    init {
+    fun getSide(): Side = localSide.get()
+
+    inline fun <reified T: Entity> createEntity(): T =
+        (entityRegistry.getEntry(T::class)?.createInstance() ?: throw RuntimeException("I dunno man")) as T
+
+    open fun init() {
         // Set the side of the game container
         localSide.set(networker.side)
 
@@ -41,9 +46,6 @@ abstract class GameContainer(val networker: Networker) {
         }
     }
 
-    fun getSide(): Side = localSide.get()
-
-    abstract fun init()
     abstract fun update()
     abstract fun dispose()
 }

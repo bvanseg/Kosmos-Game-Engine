@@ -17,7 +17,7 @@ open class RegistryManager {
 
     inline fun <reified V : Any> addClassInstanceRegistry(): InstanceRegistry<KClass<out V>, V> = addInstanceRegistry()
 
-    inline fun <reified K, reified V : Any> addInstanceRegistry(): InstanceRegistry<K, V> {
+    inline fun <reified K: Any, reified V : Any> addInstanceRegistry(): InstanceRegistry<K, V> {
         logger.info("Creating new registry for object of type: ${V::class}")
         val newRegistry = InstanceRegistry<K, V>()
         registries[V::class] = newRegistry
