@@ -78,6 +78,9 @@ class KosmosEngine {
         networkReadWriteRegistry.register(Int::class, Pair({ byteBuf -> byteBuf.readInt() }, { value, byteBuf -> byteBuf.writeInt(value as Int) }))
         networkReadWriteRegistry.register(Long::class, Pair({ byteBuf -> byteBuf.readLong() }, { value, byteBuf -> byteBuf.writeLong(value as Long) }))
 
+        networkReadWriteRegistry.register(Float::class, Pair({ byteBuf -> byteBuf.readFloat() }, { value, byteBuf -> byteBuf.writeFloat(value as Float) }))
+        networkReadWriteRegistry.register(Double::class, Pair({ byteBuf -> byteBuf.readDouble() }, { value, byteBuf -> byteBuf.writeDouble(value as Double) }))
+
         networkReadWriteRegistry.register(String::class, Pair({ byteBuf -> byteBuf.readUTF8String() }, { value, byteBuf -> byteBuf.writeUTF8String(value as String) }))
 
         networkReadWriteRegistry.register(Vector2ic::class, Pair({ byteBuf -> byteBuf.readVector2ic() }, { value, byteBuf -> byteBuf.writeVector2ic(value as Vector2ic) }))
