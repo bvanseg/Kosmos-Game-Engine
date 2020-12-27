@@ -19,6 +19,7 @@ class AttributeUpdateMessage(): GameMessage(MessageTarget.CLIENT) {
     lateinit var attributeMap: AttributeMap
 
     constructor(entity: Entity) : this() {
+        this.entityUUID = entity.uuid
         this.attributeMap = entity.attributeMap
     }
 
@@ -34,6 +35,8 @@ class AttributeUpdateMessage(): GameMessage(MessageTarget.CLIENT) {
     }
 
     override fun handle(ctx: GameContext) {
-        TODO("Not yet implemented")
+        val entity = ctx.gameContainer.entities[entityUUID] ?: return // TODO: log warning or exception here
+        // The updated attributes override the attributes in the entity's current map.
+        entity.attributeMap.merge(attributeMap)
     }
 }

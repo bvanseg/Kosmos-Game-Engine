@@ -22,6 +22,11 @@ class AttributeMap(bearer: Any? = null) {
 
     private val modifiedAttributes = hashSetOf<String>()
 
+    fun addAttribute(attribute: Attribute<*>) {
+        backingMap[attribute.name] = attribute
+        attribute.attributeMap = this
+    }
+
     fun <T: Any> createAttribute(name: String, value: T): Attribute<T> {
 
         val klazz = value::class
@@ -45,6 +50,10 @@ class AttributeMap(bearer: Any? = null) {
     fun <T: Any> getOrCreateAttribute(name: String, value: T): Attribute<T> = backingMap.computeIfAbsent(name) {
         createAttribute(name, value)
     } as Attribute<T>
+
+    fun getAllAttributes() = backingMap.values
+
+    fun clearAttributes() = backingMap.clear()
 
     fun upgrade() {
         backingMap.forEach { (_, attribute) ->
@@ -170,6 +179,18 @@ class AttributeMap(bearer: Any? = null) {
 
     fun notifyAttributeChange(attribute: Attribute<*>) {
         modifiedAttributes.add(attribute.name)
+    }
+
+    /**
+     * Merges the given [AttributeMap] into this AttributeMap.
+     *
+     * @param attributeMap The attribute map to merge into this map.
+     */
+    fun merge(attributeMap: AttributeMap) {
+        attributeMap.getAllAttributes().forEach { attribute ->
+            this.addAttribute(attribute)
+        }
+        attributeMap.clearAttributes()
     }
 
     override fun toString(): String = backingMap.toString()

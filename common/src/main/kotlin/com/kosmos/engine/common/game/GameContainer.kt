@@ -1,11 +1,14 @@
 package com.kosmos.engine.common.game
 
 import com.kosmos.engine.common.KosmosEngine
+import com.kosmos.engine.common.entity.Entity
 import com.kosmos.engine.common.event.RegisterEntitiesEvent
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.ctx.GameContext
 import com.kosmos.engine.common.registry.impl.EntityRegistry
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author Boston Vanseghi
@@ -19,6 +22,8 @@ abstract class GameContainer(val networker: Networker) {
     private val localSide = InheritableThreadLocal<Side>()
 
     protected val entityRegistry = EntityRegistry(networker)
+
+    val entities = ConcurrentHashMap<UUID, Entity>()
 
     init {
         // Set the side of the game container

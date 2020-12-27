@@ -2,7 +2,6 @@ package com.kosmos.engine.common.network.message.impl
 
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.entity.Entity
-import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.MessageTarget
 import com.kosmos.engine.common.network.message.ctx.GameContext
 import io.netty.buffer.ByteBuf
@@ -53,14 +52,6 @@ class EntityCreateMessage(): GameMessage(MessageTarget.CLIENT) {
     }
 
     override fun handle(ctx: GameContext) {
-        when(side) {
-            Side.CLIENT -> {
-                logger.info("I'm a dummy, I made it to the client in one piece!")
-                logger.info("Here are my attributes: ${entity.attributeMap}")
-            }
-            Side.SERVER -> {
-                logger.error("I don't belong here!")
-            }
-        }
+        ctx.gameContainer.entities[entity.uuid] = entity
     }
 }
