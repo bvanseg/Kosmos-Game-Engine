@@ -12,17 +12,25 @@ import kotlin.reflect.KClass
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class AttributeMap {
+class AttributeMap(bearer: Any? = null) {
 
     companion object {
         val logger = getLogger()
     }
 
-    val backingMap = ConcurrentHashMap<String, Attribute<*>>()
+    private val backingMap = ConcurrentHashMap<String, Attribute<*>>()
 
-    inline fun <reified T: Any> createAttribute(name: String, value: T): Attribute<T> {
+    fun <T: Any> createAttribute(name: String, value: T): Attribute<T> {
 
-        val attribute = Attribute(name, value, T::class)
+        val klazz = value::class
+
+        if(klazz == Attribute::class) {
+            throw IllegalArgumentException("Attributes may not contain other attributes!")
+        } else if(klazz == AttributeMap::class) {
+            throw IllegalArgumentException("Attributes may not contain attribute maps!")
+        }
+
+        val attribute = Attribute(name, value, klazz, this)
 
         backingMap[name] = attribute
 
@@ -31,8 +39,8 @@ class AttributeMap {
 
     fun <T: Any> getAttribute(name: String): Attribute<T>? = backingMap[name] as Attribute<T>?
 
-    inline fun <reified T: Any> getOrCreateAttribute(name: String, value: T): Attribute<T> = backingMap.computeIfAbsent(name) {
-        Attribute(name, value, T::class)
+    fun <T: Any> getOrCreateAttribute(name: String, value: T): Attribute<T> = backingMap.computeIfAbsent(name) {
+        createAttribute(name, value)
     } as Attribute<T>
 
     fun upgrade() {
@@ -130,7 +138,7 @@ class AttributeMap {
      * @author Boston Vanseghi
      * @since 1.0.0
      */
-    data class Attribute<T : Any> constructor(val name: String, private var value: T, val type: KClass<T>) {
+    data class Attribute<T : Any> constructor(val name: String, private var value: T, val type: KClass<out T>, val attributeMap: AttributeMap) {
 
         val initialValue: T = value
 

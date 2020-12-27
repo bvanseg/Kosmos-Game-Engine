@@ -8,7 +8,7 @@ import io.netty.buffer.ByteBuf
  * @since 1.0.0
  */
 abstract class Entity {
-    val attributeMap = AttributeMap()
+    val attributeMap by lazy { AttributeMap(this) }
 
     fun write(buffer: ByteBuf) {
         attributeMap.write(buffer)
