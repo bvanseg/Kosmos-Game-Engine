@@ -2,9 +2,7 @@ package com.kosmos.engine.common.network.message.impl
 
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.entity.Entity
-import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
-import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageTarget
 import com.kosmos.engine.common.network.message.ctx.GameContext
 import io.netty.buffer.ByteBuf

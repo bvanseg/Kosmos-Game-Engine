@@ -1,8 +1,5 @@
 package com.kosmos.engine.common.network.util
 
-import bvanseg.kotlincommons.bool.toInt
-import kotlin.experimental.or
-
 fun Byte.toBoolean(): Boolean = this.toInt() != 0
 fun Short.toBoolean(): Boolean = this.toInt() != 0
 fun Int.toBoolean(): Boolean = this != 0

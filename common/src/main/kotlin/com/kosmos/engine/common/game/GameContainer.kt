@@ -1,7 +1,6 @@
 package com.kosmos.engine.common.game
 
 import com.kosmos.engine.common.KosmosEngine
-import com.kosmos.engine.common.entity.EntityDummy
 import com.kosmos.engine.common.event.RegisterEntitiesEvent
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side

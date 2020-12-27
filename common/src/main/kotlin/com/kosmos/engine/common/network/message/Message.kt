@@ -5,8 +5,6 @@ import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.ctx.MessageContext
 import io.netty.buffer.ByteBuf
-import io.netty.channel.Channel
-import io.netty.util.AttributeKey
 
 /**
  * @author Boston Vanseghi

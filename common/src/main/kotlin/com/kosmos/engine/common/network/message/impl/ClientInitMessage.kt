@@ -6,7 +6,6 @@ import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageTarget
 import com.kosmos.engine.common.network.message.ctx.MessageContext
-import com.kosmos.engine.common.network.message.ctx.MessageContextImpl
 import com.kosmos.engine.common.network.util.readUUID
 import com.kosmos.engine.common.network.util.readVersion
 import com.kosmos.engine.common.network.util.writeUUID

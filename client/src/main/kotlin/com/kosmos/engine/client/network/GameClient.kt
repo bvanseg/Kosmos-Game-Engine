@@ -10,7 +10,6 @@ import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.ctx.MessageContext
 import com.kosmos.engine.common.network.message.decode.MessageDecoder
 import com.kosmos.engine.common.network.message.encode.MessageEncoder
-import com.kosmos.engine.common.network.message.impl.PingMessage
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.Channel
 import io.netty.channel.ChannelFuture
@@ -20,7 +19,6 @@ import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 import java.net.InetSocketAddress
 import java.util.*
-import java.util.concurrent.atomic.AtomicLong
 
 /**
  * @author Boston Vanseghi

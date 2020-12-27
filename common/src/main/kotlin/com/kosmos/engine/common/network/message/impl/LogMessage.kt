@@ -1,6 +1,5 @@
 package com.kosmos.engine.common.network.message.impl
 
-import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.message.LogLevel
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.MessageTarget
@@ -10,7 +9,6 @@ import com.kosmos.engine.common.network.util.readUTF8String
 import com.kosmos.engine.common.network.util.writeEnum
 import com.kosmos.engine.common.network.util.writeUTF8String
 import io.netty.buffer.ByteBuf
-import io.netty.channel.Channel
 
 /**
  * @author Boston Vanseghi
