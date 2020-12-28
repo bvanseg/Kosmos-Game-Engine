@@ -23,8 +23,6 @@ class AttributeMap(val bearer: Any? = null) {
 
     private val modifiedAttributes = hashSetOf<String>()
 
-    private var hasModifiedAttributes = false
-
     val size: Int
         get() = backingMap.size
 
@@ -143,19 +141,14 @@ class AttributeMap(val bearer: Any? = null) {
 
         if(clearAttributeChanges) {
             modifiedAttributes.clear()
-            hasModifiedAttributes = false
         }
     }
 
     fun notifyAttributeChange(attribute: Attribute<*>) {
         modifiedAttributes.add(attribute.name)
-
-        if (!hasModifiedAttributes) {
-            hasModifiedAttributes = true
-        }
     }
 
-    fun hasModifiedAttributes() = hasModifiedAttributes
+    fun hasModifiedAttributes(): Boolean = modifiedAttributes.isNotEmpty()
 
     /**
      * Merges the given [AttributeMap] into this AttributeMap.
