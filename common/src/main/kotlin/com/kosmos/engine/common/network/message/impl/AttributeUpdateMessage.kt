@@ -15,33 +15,48 @@ import java.util.*
  */
 class AttributeUpdateMessage(): GameMessage(MessageTarget.CLIENT) {
 
-    lateinit var entityUUID: UUID
-    lateinit var attributeMap: AttributeMap
+    private var entities = mutableListOf<Entity>()
+    private var attributeMaps = hashMapOf<UUID, AttributeMap>()
 
-    constructor(entity: Entity) : this() {
-        this.entityUUID = entity.uuid
-        this.attributeMap = entity.attributeMap
+    constructor(vararg entities: Entity) : this() {
+        this.entities.addAll(entities)
+    }
+
+    constructor(entities: Collection<Entity>) : this() {
+        this.entities.addAll(entities)
     }
 
     override fun write(buffer: ByteBuf) {
-        buffer.writeUUID(entityUUID)
-        logger.debug("Written attribute map: $attributeMap")
-        attributeMap.writeModifiedAttributes(buffer)
+        buffer.writeInt(entities.size)
+
+        entities.forEach { entity ->
+            buffer.writeUUID(entity.uuid)
+            entity.attributeMap.writeModifiedAttributes(buffer)
+        }
     }
 
     lateinit var buf: ByteBuf
 
     override fun read(buffer: ByteBuf) {
-        entityUUID = buffer.readUUID()
-        attributeMap = AttributeMap()
-        attributeMap.read(buffer)
+        val entityCount = buffer.readInt()
+
+        for(i in 0 until entityCount) {
+            val uuid = buffer.readUUID()
+            val attributeMap = AttributeMap()
+            attributeMap.read(buffer)
+
+            attributeMaps[uuid] = attributeMap
+        }
     }
 
     override fun handle(ctx: GameContext) {
-        val entity = ctx.gameContainer.entities[entityUUID] ?: return // TODO: log warning or exception here
-        // The updated attributes override the attributes in the entity's current map.
-        logger.debug("Updating entity attribute map: ${entity.attributeMap}")
-        entity.attributeMap.merge(attributeMap)
-        logger.debug("Finished updating entity attribute map: ${entity.attributeMap}")
+        logger.debug("Updating entity attribute maps...")
+        val start = System.currentTimeMillis()
+        for((entityUUID, attributeMap) in attributeMaps) {
+            val entity = ctx.gameContainer.entities[entityUUID] ?: continue // TODO: log warning or exception here
+            // The updated attributes override the attributes in the entity's current map.
+            entity.attributeMap.merge(attributeMap)
+        }
+        logger.debug("Finished updating entity attribute maps in ${System.currentTimeMillis() - start}ms")
     }
 }

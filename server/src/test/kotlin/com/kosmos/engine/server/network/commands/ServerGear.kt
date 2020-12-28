@@ -12,7 +12,9 @@ import com.kosmos.engine.server.game.ServerGameContainer
 class ServerGear(val serverGameContainer: ServerGameContainer): Gear("server") {
 
     @Command
-    fun update(ctx: Context) {
-        serverGameContainer.update()
+    fun update(ctx: Context, count: Int = 1) {
+        for(i in 0 until count) {
+            serverGameContainer.update()
+        }
     }
 }

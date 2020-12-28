@@ -3,6 +3,7 @@ package com.kosmos.engine.server.game
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.entity.Entity
 import com.kosmos.engine.common.game.GameContainer
+import com.kosmos.engine.common.network.message.impl.AttributeUpdateMessage
 import com.kosmos.engine.common.network.message.impl.EntityCreateMessage
 import com.kosmos.engine.common.registry.impl.EntityRegistry
 import com.kosmos.engine.server.event.listener.ServerGameListener
@@ -25,12 +26,24 @@ open class ServerGameContainer(override val networker: GameServer): GameContaine
     }
 
     override fun update() {
-        entities.forEach { (_, entity) ->
-            entity.update()
-        }
+        val entitiesToSyncAttribs = mutableListOf<Entity>()
+
         if (queuedEntities.isNotEmpty()) {
             networker.send(EntityCreateMessage(queuedEntities))
             queuedEntities.clear()
+        }
+
+        entities.forEach { (_, entity) ->
+            entity.update()
+
+            if(entity.hasModifiedAttributes()) {
+                entitiesToSyncAttribs.add(entity)
+            }
+        }
+
+        if(entitiesToSyncAttribs.isNotEmpty()) {
+            networker.send(AttributeUpdateMessage(entitiesToSyncAttribs))
+            entitiesToSyncAttribs.clear()
         }
     }
 

@@ -17,11 +17,13 @@ abstract class Entity {
     var uuid = UUID.randomUUID()
         private set
 
-    internal val attributeMap by lazy { AttributeMap(this) }
-
     internal lateinit var gameContainer: GameContainer
 
+    internal val attributeMap by lazy { AttributeMap(this) }
+
     protected open fun initAttributes(attributeMap: AttributeMap) = Unit
+
+    fun hasModifiedAttributes(): Boolean = attributeMap.hasModifiedAttributes()
 
     fun init() {
         initAttributes(attributeMap)
@@ -40,9 +42,5 @@ abstract class Entity {
         attributeMap.read(buffer)
     }
 
-    open fun update() {
-        if (attributeMap.hasModifiedAttributes()) {
-            gameContainer.networker.send(AttributeUpdateMessage(this))
-        }
-    }
+    open fun update() = Unit
 }
