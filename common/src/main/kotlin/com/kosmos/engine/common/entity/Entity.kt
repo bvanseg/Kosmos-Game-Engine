@@ -17,9 +17,18 @@ abstract class Entity {
     var uuid = UUID.randomUUID()
         private set
 
-    val attributeMap by lazy { AttributeMap(this) }
+    internal val attributeMap by lazy { AttributeMap(this) }
 
     internal lateinit var gameContainer: GameContainer
+
+    protected open fun initAttributes(attributeMap: AttributeMap) = Unit
+
+    fun init() {
+        initAttributes(attributeMap)
+        attributeMap.getAllAttributes().forEach {
+            it.isDefault = true
+        }
+    }
 
     fun write(buffer: ByteBuf) {
         buffer.writeUUID(uuid)

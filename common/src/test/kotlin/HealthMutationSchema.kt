@@ -1,11 +1,11 @@
-import com.kosmos.engine.common.attribute.AttributeMap
+import com.kosmos.engine.common.attribute.Attribute
 import com.kosmos.engine.common.attribute.AttributeMutationSchema
 
 /**
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-class HealthMutationSchema(attribute: AttributeMap.Attribute<Int>): AttributeMutationSchema<Int>(attribute) {
+class HealthMutationSchema(attribute: Attribute<Int>): AttributeMutationSchema<Int>(attribute) {
 
     init {
         setUpgradeSchema {

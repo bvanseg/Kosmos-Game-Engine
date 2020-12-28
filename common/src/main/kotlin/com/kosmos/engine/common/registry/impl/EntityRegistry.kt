@@ -15,6 +15,7 @@ open class EntityRegistry(private val gameContainer: GameContainer): FactoryRegi
     val instance = createNewInstance(entry.value.java)
     if (instance != null) {
         instance.gameContainer = gameContainer
+        instance.init()
     }
     instance
 })

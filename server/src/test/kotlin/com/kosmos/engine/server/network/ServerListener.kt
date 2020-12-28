@@ -66,7 +66,7 @@ class ServerListener(val gameContainer: ServerGameContainer) {
                 }
                 "level" -> {
                     println("upgrading dummy entity...")
-                    val health = firstEntity?.attributeMap?.getAttribute<Int>("health")
+                    val health = firstEntity?.health
                     health?.set(health.get() + 10)
                 }
             }

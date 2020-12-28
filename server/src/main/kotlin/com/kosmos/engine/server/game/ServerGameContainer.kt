@@ -25,7 +25,9 @@ open class ServerGameContainer(override val networker: GameServer): GameContaine
     }
 
     override fun update() {
-
+        entities.forEach { (_, entity) ->
+            entity.update()
+        }
         if (queuedEntities.isNotEmpty()) {
             networker.send(EntityCreateMessage(queuedEntities))
             queuedEntities.clear()

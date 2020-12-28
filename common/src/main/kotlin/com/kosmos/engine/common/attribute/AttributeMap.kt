@@ -19,13 +19,16 @@ class AttributeMap(val bearer: Any? = null) {
         val logger = getLogger()
     }
 
-    private val backingMap = ConcurrentHashMap<String, Attribute<Any>>()
+    private val backingMap = ConcurrentHashMap<String, Attribute<out Any>>()
 
     private val modifiedAttributes = hashSetOf<String>()
 
     private var hasModifiedAttributes = false
 
-    fun addAttribute(attribute: Attribute<Any>) {
+    val size: Int
+        get() = backingMap.size
+
+    fun addAttribute(attribute: Attribute<out Any>) {
         backingMap[attribute.name] = attribute
         attribute.attributeMap = this
     }
@@ -41,8 +44,8 @@ class AttributeMap(val bearer: Any? = null) {
         }
 
         val attribute = Attribute(name, value, klazz)
-        attribute.attributeMap = this
 
+        attribute.attributeMap = this
         backingMap[name] = attribute as Attribute<Any>
 
         return attribute
@@ -62,11 +65,12 @@ class AttributeMap(val bearer: Any? = null) {
         val engine = KosmosEngine.getInstance()
         val registry = engine.networkReadWriteRegistry
 
-        // Write the number of attributes to the buffer.
-        buffer.writeShort(backingMap.size)
+        // Write the number of non-default or modified attributes to the buffer.
+        val nonDefaultAttributes = backingMap.filter { !it.value.isDefault || modifiedAttributes.contains(it.key) }
+        buffer.writeShort(nonDefaultAttributes.size)
 
         // Write all of our attributes to the buffer with name first and attribute data following the name.
-        for((_, attribute) in backingMap) {
+        for((_, attribute) in nonDefaultAttributes) {
             val type = attribute.type
 
             // Get write data for attribute type.
@@ -166,39 +170,4 @@ class AttributeMap(val bearer: Any? = null) {
     }
 
     override fun toString(): String = backingMap.toString()
-
-    /**
-     * @author Boston Vanseghi
-     * @since 1.0.0
-     */
-    data class Attribute<T : Any> internal constructor(val name: String, private var value: T, val type: KClass<out T>) {
-
-        val initialValue: T = value
-
-        lateinit var attributeMap: AttributeMap
-
-        fun get() = value
-
-        fun set(value: T) {
-            val hasChanged = this.value != value
-            this.value = value
-
-            if (hasChanged) {
-                attributeMap.notifyAttributeChange(this)
-            }
-        }
-
-        override fun hashCode(): Int = ((name.hashCode() * 47) + value.hashCode()) * 47
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Attribute<*>
-
-            if (name != other.name) return false
-            if (value != other.value) return false
-
-            return true
-        }
-    }
 }
