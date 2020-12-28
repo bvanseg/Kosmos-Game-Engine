@@ -65,8 +65,6 @@ class AttributeMap(val bearer: Any? = null) {
     fun clearAttributes() = backingMap.clear()
 
     fun write(buffer: ByteBuf) {
-        val engine = KosmosEngine.getInstance()
-        val registry = engine.networkReadWriteRegistry
 
         // Write the number of non-default or modified attributes to the buffer.
         val nonDefaultAttributes = backingMap.filter { !it.value.isDefault || modifiedAttributes.contains(it.key) }
@@ -74,47 +72,21 @@ class AttributeMap(val bearer: Any? = null) {
 
         // Write all of our attributes to the buffer with name first and attribute data following the name.
         for((_, attribute) in nonDefaultAttributes) {
-            val type = attribute.type
-
-            // Get write data for attribute type.
-            val readWriteEntry = registry.getEntry(type)
-                ?: throw RuntimeException("Failed to get read/write entry for type '$type'")
-
-            val write = readWriteEntry.value.second
-
-            // write Attribute.
-            buffer.writeUTF8String(attribute.name)
-            val attributeTypeID = registry.getIDForKey(type) ?: throw RuntimeException("Attribute type is not registered: $type")
-            buffer.writeInt(attributeTypeID)
-            write(attribute.get(), buffer)
+            attribute.write(buffer)
         }
     }
 
     fun read(buffer: ByteBuf) {
-        val engine = KosmosEngine.getInstance()
-        val registry = engine.networkReadWriteRegistry
 
         val attributeCount = buffer.readShort()
 
         for(i in 0 until attributeCount) {
-            val name = buffer.readUTF8String()
-            val attributeTypeID = buffer.readInt()
-            val type = registry.getKeyByID(attributeTypeID) ?: throw RuntimeException("Failed to get key for attribute type using id $attributeTypeID")
-
-            // Get read data for attribute type.
-            val readWriteEntry = registry.getEntry(type)
-
-            if(readWriteEntry == null) {
-                logger.warn("Failed to get read/write entry for attribute type '$type'")
-                continue
+            val attribute = Attribute.read(buffer)
+            if (attribute != null) {
+                addAttribute(attribute)
+            } else {
+                // TODO: Add logger warning here.
             }
-
-            val read = readWriteEntry.value.first
-
-            // read Attribute properties.
-            val value = read(buffer)
-
-            createAttribute(name, value)
         }
     }
 
