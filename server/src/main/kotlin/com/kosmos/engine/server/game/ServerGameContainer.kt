@@ -48,6 +48,9 @@ open class ServerGameContainer(override val networker: GameServer): GameContaine
 
         if(entitiesToDestroy.isNotEmpty()) {
             networker.send(EntityDestroyMessage(entitiesToDestroy))
+            entitiesToDestroy.forEach {
+                entities.remove(it.uuid)
+            }
             entitiesToDestroy.clear()
         }
 
