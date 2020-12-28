@@ -60,7 +60,7 @@ class MessageEncoder: MessageToByteEncoder<Message<MessageContext>>() {
 
             val header = MessageHeader(uuid, messageID, networker.messagesSent.get(), size)
 
-            logger.debug("Writing message with header info $header")
+            logger.debug("Writing message of type '${message::class.simpleName}' with header info $header")
             header.write(out)
             out.writeBytes(sampleBuf)
 
