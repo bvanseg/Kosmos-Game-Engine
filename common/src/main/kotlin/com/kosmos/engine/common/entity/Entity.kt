@@ -16,6 +16,8 @@ abstract class Entity {
     var uuid = UUID.randomUUID()
         private set
 
+    protected var ticksExisted: Long = 0
+
     private var isDead: Boolean = false
 
     fun isDead() = isDead
@@ -49,5 +51,7 @@ abstract class Entity {
         attributeMap.read(buffer)
     }
 
-    open fun update() = Unit
+    open fun update() {
+        this.ticksExisted++
+    }
 }
