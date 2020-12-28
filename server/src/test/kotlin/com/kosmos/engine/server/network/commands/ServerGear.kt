@@ -4,6 +4,7 @@ import bvanseg.kotlincommons.armada.annotation.Command
 import bvanseg.kotlincommons.armada.context.Context
 import bvanseg.kotlincommons.armada.gear.Gear
 import com.kosmos.engine.server.game.ServerGameContainer
+import java.util.*
 
 /**
  * @author Boston Vanseghi
@@ -15,6 +16,21 @@ class ServerGear(val serverGameContainer: ServerGameContainer): Gear("server") {
     fun update(ctx: Context, count: Int = 1) {
         for(i in 0 until count) {
             serverGameContainer.update()
+        }
+    }
+
+    @Command
+    fun kill(ctx: Context, arg: String) {
+        when(arg.toLowerCase()) {
+            "all" -> {
+                serverGameContainer.entities.forEach { (_, entity) ->
+                    entity.setDead()
+                }
+            }
+            else -> {
+                val uuid = UUID.fromString(arg)
+                serverGameContainer.entities[uuid]?.setDead()
+            }
         }
     }
 }
