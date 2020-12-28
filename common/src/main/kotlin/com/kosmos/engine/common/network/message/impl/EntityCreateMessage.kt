@@ -12,46 +12,55 @@ import io.netty.buffer.ByteBuf
  */
 class EntityCreateMessage(): GameMessage(MessageTarget.CLIENT) {
 
-    var entityID: Int = 0
-    lateinit var entity: Entity
+    var entities: MutableList<Entity> = mutableListOf()
 
-    constructor(entity: Entity): this() {
-        this.entity = entity
+    constructor(vararg entities: Entity): this() {
+        this.entities.addAll(entities)
     }
 
     override fun write(buffer: ByteBuf) {
         val registry = KosmosEngine.getInstance().registryManager.getFactoryRegistry<Entity>()
-        val id = registry.getIDFor(entity)
 
-        buffer.writeInt(id)
-        entity.write(buffer)
+        buffer.writeInt(entities.size)
+        for(entity in entities) {
+            val id = registry.getIDFor(entity)
+            buffer.writeInt(id)
+            entity.write(buffer)
+        }
     }
 
     override fun read(buffer: ByteBuf) {
         val registry = KosmosEngine.getInstance().registryManager.getFactoryRegistry<Entity>()
 
-        entityID = buffer.readInt()
+        val entityCount = buffer.readInt()
 
-        val entityFactoryEntry = registry.getEntryByID(entityID)
+        for(i in 0 until entityCount) {
+            val entityID = buffer.readInt()
 
-        if(entityFactoryEntry == null) {
-            logger.warn("Failed to find an entity factory entry with entity ID $entityID")
-            return
+            val entityFactoryEntry = registry.getEntryByID(entityID)
+
+            if(entityFactoryEntry == null) {
+                logger.warn("Failed to find an entity factory entry with entity ID $entityID")
+                return
+            }
+
+            val createdEntity = entityFactoryEntry.createInstance()
+
+            if(createdEntity == null) {
+                logger.warn("Failed to create an entity from the given factory entry with entity ID $entityID")
+                return
+            }
+
+            createdEntity.read(buffer)
+
+            entities.add(createdEntity)
         }
 
-        val createdEntity = entityFactoryEntry.createInstance()
-
-        if(createdEntity == null) {
-            logger.warn("Failed to create an entity from the given factory entry with entity ID $entityID")
-            return
-        }
-
-        entity = createdEntity
-
-        entity.read(buffer)
     }
 
     override fun handle(ctx: GameContext) {
-        ctx.gameContainer.entities[entity.uuid] = entity
+        for(entity in entities) {
+            ctx.gameContainer.entities[entity.uuid] = entity
+        }
     }
 }

@@ -55,9 +55,6 @@ class ServerListener(val gameContainer: GameContainer) {
                     if(firstEntity == null) {
                         firstEntity = dummy
                     }
-
-                    val entityCreateMessage = EntityCreateMessage(dummy)
-                    event.gameServer.broadcast(entityCreateMessage)
                 }
                 "level" -> {
                     println("upgrading dummy entity...")

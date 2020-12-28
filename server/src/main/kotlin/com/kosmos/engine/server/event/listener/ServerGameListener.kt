@@ -18,8 +18,6 @@ class ServerGameListener(private val gameContainer: ServerGameContainer) {
     fun onClientConnect(event: ServerClientConnectEvent.POST) {
         // Synchronize all entities with the client.
         logger.info("Synchronizing entities with client ${event.dummyClient.uuid}")
-        gameContainer.entities.forEach { (_, entity) ->
-            gameContainer.networker.send(EntityCreateMessage(entity))
-        }
+        gameContainer.networker.send(EntityCreateMessage(*gameContainer.entities.values.toTypedArray()))
     }
 }
