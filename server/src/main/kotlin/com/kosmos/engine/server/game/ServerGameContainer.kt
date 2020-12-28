@@ -58,6 +58,6 @@ open class ServerGameContainer(override val networker: GameServer): GameContaine
     }
 
     override fun dispose() {
-        TODO("Not yet implemented")
+        networker.close()
     }
 }
