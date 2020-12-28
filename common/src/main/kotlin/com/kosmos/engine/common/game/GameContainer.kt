@@ -14,14 +14,14 @@ import java.util.concurrent.ConcurrentHashMap
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-abstract class GameContainer(val networker: Networker) {
+abstract class GameContainer(open val networker: Networker) {
 
     /**
      * The [Side] of the [GameContainer], whether it is Client or Server.
      */
     private val localSide = InheritableThreadLocal<Side>()
 
-    val entityRegistry = EntityRegistry(this)
+    abstract val entityRegistry: EntityRegistry
 
     val entities = ConcurrentHashMap<UUID, Entity>()
 

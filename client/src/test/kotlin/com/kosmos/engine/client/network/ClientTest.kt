@@ -1,6 +1,7 @@
 package com.kosmos.engine.client.network
 
 import com.kosmos.bootstrapper.event.PluginInitializationEvent
+import com.kosmos.engine.client.game.ClientGameContainer
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.game.GameContainer
 
@@ -14,17 +15,7 @@ fun main() {
     // Create client
     val client = GameClient()
 
-    val gameContainer = object: GameContainer(client) {
-
-        override fun update() {
-            TODO("Not yet implemented")
-        }
-
-        override fun dispose() {
-            TODO("Not yet implemented")
-        }
-
-    }
+    val gameContainer = ClientGameContainer(client)
 
     gameContainer.init()
 

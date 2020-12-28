@@ -18,6 +18,10 @@ class EntityCreateMessage(): GameMessage(MessageTarget.CLIENT) {
         this.entities.addAll(entities)
     }
 
+    constructor(entities: Collection<Entity>): this() {
+        this.entities.addAll(entities)
+    }
+
     override fun write(buffer: ByteBuf) {
         val registry = KosmosEngine.getInstance().registryManager.getFactoryRegistry<Entity>()
 
