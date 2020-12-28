@@ -2,7 +2,7 @@ package com.kosmos.engine.server.network
 
 import com.kosmos.bootstrapper.event.PluginInitializationEvent
 import com.kosmos.engine.common.KosmosEngine
-import com.kosmos.engine.common.game.GameContainer
+import com.kosmos.engine.server.game.ServerGameContainer
 
 /**
  * @author Boston Vanseghi
@@ -15,16 +15,7 @@ fun main() {
 
     val server = GameServer()
 
-    val gameContainer = object: GameContainer(server) {
-
-        override fun update() {
-            TODO("Not yet implemented")
-        }
-
-        override fun dispose() {
-            TODO("Not yet implemented")
-        }
-    }
+    val gameContainer = ServerGameContainer(server)
 
     engine.eventBus.addListener(ServerListener(gameContainer))
 

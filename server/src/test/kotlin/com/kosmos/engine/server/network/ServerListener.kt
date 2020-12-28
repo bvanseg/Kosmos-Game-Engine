@@ -23,10 +23,10 @@ class ServerListener(val gameContainer: GameContainer) {
 
     @SubscribeEvent
     fun onClientConnect(event: ServerClientConnectEvent.POST) {
-        val dummy = EntityDummy()
-        val entityCreateMessage = EntityCreateMessage(dummy)
-        dummy.attributeMap.getAttribute<Int>("health")?.set(110)
-        event.dummyClient.send(entityCreateMessage)
+//        val dummy = EntityDummy()
+//        val entityCreateMessage = EntityCreateMessage(dummy)
+//        dummy.attributeMap.getAttribute<Int>("health")?.set(110)
+//        event.dummyClient.send(entityCreateMessage)
     }
 
     @SubscribeEvent
@@ -35,8 +35,7 @@ class ServerListener(val gameContainer: GameContainer) {
 
         val scanner = Scanner(System.`in`)
 
-        val dummy = gameContainer.createEntity<EntityDummy>()
-
+        var firstEntity: EntityDummy? = null
         while(scanner.hasNext()) {
             val input = scanner.nextLine()
 
@@ -51,17 +50,23 @@ class ServerListener(val gameContainer: GameContainer) {
                 }
                 "entity" -> {
                     println("sending dummy entity...")
+                    val dummy = gameContainer.createEntity<EntityDummy>()
+
+                    if(firstEntity == null) {
+                        firstEntity = dummy
+                    }
+
                     val entityCreateMessage = EntityCreateMessage(dummy)
                     event.gameServer.broadcast(entityCreateMessage)
                 }
                 "level" -> {
                     println("upgrading dummy entity...")
-                    val health = dummy.attributeMap.getAttribute<Int>("health")
+                    val health = firstEntity?.attributeMap?.getAttribute<Int>("health")
                     health?.set(health.get() + 10)
                 }
                 "update" -> {
                     println("updating dummy entity...")
-                    dummy.update()
+                    firstEntity?.update()
                 }
             }
         }
