@@ -2,9 +2,8 @@ package com.kosmos.engine.server.network
 
 import bvanseg.kotlincommons.armada.CommandManager
 import bvanseg.kotlincommons.evenir.annotation.SubscribeEvent
-import com.kosmos.engine.common.entity.EntityDummy
+import com.kosmos.engine.common.entity.EntityZealot
 import com.kosmos.engine.common.event.RegisterEntitiesEvent
-import com.kosmos.engine.common.game.GameContainer
 import com.kosmos.engine.common.network.message.impl.PingMessage
 import com.kosmos.engine.server.event.ServerBindEvent
 import com.kosmos.engine.server.event.ServerClientConnectEvent
@@ -21,7 +20,7 @@ class ServerListener(val gameContainer: ServerGameContainer) {
 
     @SubscribeEvent
     fun onEntitiesRegister(event: RegisterEntitiesEvent) {
-        event.entityRegistry.register(EntityDummy::class)
+        event.entityRegistry.register(EntityZealot::class)
     }
 
     @SubscribeEvent
@@ -42,7 +41,7 @@ class ServerListener(val gameContainer: ServerGameContainer) {
 
         val scanner = Scanner(System.`in`)
 
-        var firstEntity: EntityDummy? = null
+        var firstEntity: EntityZealot? = null
         while(scanner.hasNext()) {
             val input = scanner.nextLine()
             commandManager.execute(input)
@@ -58,7 +57,7 @@ class ServerListener(val gameContainer: ServerGameContainer) {
                 }
                 "entity" -> {
                     println("sending dummy entity...")
-                    val dummy = gameContainer.createEntity<EntityDummy>()
+                    val dummy = gameContainer.createEntity<EntityZealot>()
 
                     if(firstEntity == null) {
                         firstEntity = dummy

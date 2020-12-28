@@ -1,7 +1,7 @@
 package com.kosmos.engine.client.network
 
 import bvanseg.kotlincommons.evenir.annotation.SubscribeEvent
-import com.kosmos.engine.common.entity.EntityDummy
+import com.kosmos.engine.common.entity.EntityZealot
 import com.kosmos.engine.common.event.RegisterEntitiesEvent
 
 /**
@@ -12,6 +12,6 @@ object ClientListener {
 
     @SubscribeEvent
     fun onEntitiesRegister(event: RegisterEntitiesEvent) {
-        event.entityRegistry.register(EntityDummy::class)
+        event.entityRegistry.register(EntityZealot::class)
     }
 }

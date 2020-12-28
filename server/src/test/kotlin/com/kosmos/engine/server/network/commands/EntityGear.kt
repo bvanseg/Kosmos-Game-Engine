@@ -4,7 +4,7 @@ import bvanseg.kotlincommons.armada.annotation.Command
 import bvanseg.kotlincommons.armada.context.Context
 import bvanseg.kotlincommons.armada.gear.Gear
 import com.kosmos.engine.common.entity.Entity
-import com.kosmos.engine.common.entity.EntityDummy
+import com.kosmos.engine.common.entity.EntityZealot
 import com.kosmos.engine.server.game.ServerGameContainer
 import java.util.*
 
@@ -19,7 +19,7 @@ class EntityGear(private val serverGameContainer: ServerGameContainer): Gear("en
         println("creating entities...")
         val entities = mutableListOf<Entity>()
         for(i in 0 until amount) {
-            entities.add(serverGameContainer.createEntity<EntityDummy>())
+            entities.add(serverGameContainer.createEntity<EntityZealot>())
         }
     }
 
