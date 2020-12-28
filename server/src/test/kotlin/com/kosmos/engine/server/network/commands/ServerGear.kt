@@ -18,19 +18,4 @@ class ServerGear(val serverGameContainer: ServerGameContainer): Gear("server") {
             serverGameContainer.update()
         }
     }
-
-    @Command
-    fun kill(ctx: Context, arg: String) {
-        when(arg.toLowerCase()) {
-            "all" -> {
-                serverGameContainer.entities.forEach { (_, entity) ->
-                    entity.setDead()
-                }
-            }
-            else -> {
-                val uuid = UUID.fromString(arg)
-                serverGameContainer.entities[uuid]?.setDead()
-            }
-        }
-    }
 }
