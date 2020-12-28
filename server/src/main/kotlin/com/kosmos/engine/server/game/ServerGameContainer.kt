@@ -5,6 +5,7 @@ import com.kosmos.engine.common.entity.Entity
 import com.kosmos.engine.common.game.GameContainer
 import com.kosmos.engine.common.network.message.impl.AttributeUpdateMessage
 import com.kosmos.engine.common.network.message.impl.EntityCreateMessage
+import com.kosmos.engine.common.network.message.impl.EntityDestroyMessage
 import com.kosmos.engine.common.registry.impl.EntityRegistry
 import com.kosmos.engine.server.event.listener.ServerGameListener
 import com.kosmos.engine.server.network.GameServer
@@ -33,12 +34,21 @@ open class ServerGameContainer(override val networker: GameServer): GameContaine
             queuedEntities.clear()
         }
 
+
+        val entitiesToDestroy = mutableListOf<Entity>()
         entities.forEach { (_, entity) ->
             entity.update()
 
-            if(entity.hasModifiedAttributes()) {
+            if(entity.isDead()) {
+                entitiesToDestroy.add(entity)
+            } else if(entity.hasModifiedAttributes()) {
                 entitiesToSyncAttribs.add(entity)
             }
+        }
+
+        if(entitiesToDestroy.isNotEmpty()) {
+            networker.send(EntityDestroyMessage(entitiesToDestroy))
+            entitiesToDestroy.clear()
         }
 
         if(entitiesToSyncAttribs.isNotEmpty()) {

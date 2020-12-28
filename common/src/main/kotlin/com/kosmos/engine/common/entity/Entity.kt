@@ -2,7 +2,6 @@ package com.kosmos.engine.common.entity
 
 import com.kosmos.engine.common.attribute.AttributeMap
 import com.kosmos.engine.common.game.GameContainer
-import com.kosmos.engine.common.network.message.impl.AttributeUpdateMessage
 import com.kosmos.engine.common.network.util.readUUID
 import com.kosmos.engine.common.network.util.writeUUID
 import io.netty.buffer.ByteBuf
@@ -16,6 +15,14 @@ abstract class Entity {
 
     var uuid = UUID.randomUUID()
         private set
+
+    private var isDead: Boolean = false
+
+    fun isDead() = isDead
+
+    fun setDead() {
+        isDead = true
+    }
 
     internal lateinit var gameContainer: GameContainer
 
