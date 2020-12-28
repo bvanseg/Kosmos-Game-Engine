@@ -17,7 +17,8 @@ fun ByteBuf.writeBigInteger(bigInt: BigInteger) {
 fun ByteBuf.readBigInteger(): BigInteger {
     val length = this.readShort().toInt()
     val byteArray = ByteArray(length)
-    this.readBytes(byteArray, 0, length)
+    val buf = this.readBytes(byteArray, 0, length)
+    buf.release() // If this function breaks, this is a likely cause.
     return BigInteger(byteArray)
 }
 
@@ -31,7 +32,8 @@ fun ByteBuf.writeBigDecimal(bigDec: BigDecimal) {
 fun ByteBuf.readBigDecimal(): BigDecimal {
     val length = this.readShort().toInt()
     val byteArray = ByteArray(length)
-    this.readBytes(byteArray, 0, length)
+    val buf = this.readBytes(byteArray, 0, length)
+    buf.release() // If this function breaks, this is a likely cause.
     val scale = this.readInt()
     return BigDecimal(BigInteger(byteArray), scale)
 }

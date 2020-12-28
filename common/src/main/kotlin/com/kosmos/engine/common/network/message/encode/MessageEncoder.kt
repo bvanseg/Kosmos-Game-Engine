@@ -63,6 +63,8 @@ class MessageEncoder: MessageToByteEncoder<Message<MessageContext>>() {
             logger.debug("Writing message with header info $header")
             header.write(out)
             out.writeBytes(sampleBuf)
+
+            sampleBuf.release() // For JVM GC.
         } catch (e: Exception) {
             e.printStackTrace()
         }
