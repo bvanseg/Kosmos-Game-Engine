@@ -22,6 +22,7 @@ class AttributeMap(val bearer: Any? = null) {
     private val backingMap = ConcurrentHashMap<String, Attribute<out Any>>()
 
     private val modifiedAttributes = hashSetOf<String>()
+    private val deletedAttributes = hashSetOf<String>()
 
     val size: Int
         get() = backingMap.size
@@ -54,6 +55,13 @@ class AttributeMap(val bearer: Any? = null) {
         return attribute
     }
 
+    fun deleteAttribute(name: String) {
+        if(backingMap.containsKey(name)) {
+            backingMap.remove(name)
+            deletedAttributes.add(name)
+        }
+    }
+
     fun <T: Any> getAttribute(name: String): Attribute<T>? = backingMap[name] as Attribute<T>?
 
     fun <T: Any> getOrCreateAttribute(name: String, value: T): Attribute<T> = backingMap.computeIfAbsent(name) {
@@ -69,16 +77,24 @@ class AttributeMap(val bearer: Any? = null) {
         // Write the number of non-default or modified attributes to the buffer.
         val nonDefaultAttributes = backingMap.filter { !it.value.isDefault || modifiedAttributes.contains(it.key) }
         buffer.writeShort(nonDefaultAttributes.size)
+        buffer.writeShort(deletedAttributes.size)
 
         // Write all of our attributes to the buffer with name first and attribute data following the name.
         for((_, attribute) in nonDefaultAttributes) {
             attribute.write(buffer)
         }
+        modifiedAttributes.clear()
+
+        for(attributeName in deletedAttributes) {
+            buffer.writeUTF8String(attributeName)
+        }
+        deletedAttributes.clear()
     }
 
     fun read(buffer: ByteBuf) {
 
         val attributeCount = buffer.readShort()
+        val deletedAttributeCount = buffer.readShort()
 
         for(i in 0 until attributeCount) {
             val attribute = Attribute.read(buffer)
@@ -88,14 +104,20 @@ class AttributeMap(val bearer: Any? = null) {
                 // TODO: Add logger warning here.
             }
         }
+
+        for(i in 0 until deletedAttributeCount) {
+            val attributeName = buffer.readUTF8String()
+            backingMap.remove(attributeName)
+        }
     }
 
-    fun writeModifiedAttributes(buffer: ByteBuf, clearAttributeChanges: Boolean = true) {
+    fun writeModifiedAttributes(buffer: ByteBuf) {
         val engine = KosmosEngine.getInstance()
         val registry = engine.networkReadWriteRegistry
 
         // Write the number of attributes to the buffer.
         buffer.writeShort(modifiedAttributes.size)
+        buffer.writeShort(deletedAttributes.size)
 
         // Write all of our attributes to the buffer with name first and attribute data following the name.
         for(attributeName in modifiedAttributes) {
@@ -115,10 +137,12 @@ class AttributeMap(val bearer: Any? = null) {
             buffer.writeInt(attributeTypeID)
             write(attribute.get(), buffer)
         }
+        modifiedAttributes.clear()
 
-        if(clearAttributeChanges) {
-            modifiedAttributes.clear()
+        for(attributeName in deletedAttributes) {
+            buffer.writeUTF8String(attributeName)
         }
+        deletedAttributes.clear()
     }
 
     fun notifyAttributeChange(attribute: Attribute<*>) {
