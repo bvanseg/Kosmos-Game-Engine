@@ -43,7 +43,10 @@ fun ByteBuf.writeUTF8String(string: String) {
 
 fun ByteBuf.readUTF8String(): String {
     val length = this.readShort().toInt()
-    return this.readBytes(length).toString(StandardCharsets.UTF_8)
+    val buf = this.readBytes(length)
+    val str = buf.toString(StandardCharsets.UTF_8)
+    buf.release() // For JVM GC.
+    return str
 }
 
 fun ByteBuf.writeUUID(uuid: UUID) {
