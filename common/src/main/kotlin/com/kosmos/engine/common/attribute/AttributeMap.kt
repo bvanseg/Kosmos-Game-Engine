@@ -26,9 +26,12 @@ class AttributeMap(val bearer: Any? = null) {
     val size: Int
         get() = backingMap.size
 
+    fun clearModifiedAttributes() = modifiedAttributes.clear()
+
     fun addAttribute(attribute: Attribute<out Any>) {
         backingMap[attribute.name] = attribute
         attribute.attributeMap = this
+        modifiedAttributes.add(attribute.name)
     }
 
     fun <T: Any> createAttribute(name: String, value: T): Attribute<T> {
@@ -45,6 +48,8 @@ class AttributeMap(val bearer: Any? = null) {
 
         attribute.attributeMap = this
         backingMap[name] = attribute as Attribute<Any>
+
+        modifiedAttributes.add(attribute.name)
 
         return attribute
     }

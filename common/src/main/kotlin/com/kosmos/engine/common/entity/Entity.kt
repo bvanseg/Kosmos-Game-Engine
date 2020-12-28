@@ -36,6 +36,7 @@ abstract class Entity {
 
     fun init() {
         initAttributes(attributeMap)
+        attributeMap.clearModifiedAttributes()
         attributeMap.getAllAttributes().forEach {
             it.isDefault = true
         }
