@@ -14,7 +14,11 @@ import java.util.concurrent.ConcurrentHashMap
  * @author Boston Vanseghi
  * @since 1.0.0
  */
-abstract class GameContainer(open val networker: Networker) {
+abstract class GameContainer(private val tickRate: Long, open val networker: Networker) {
+
+    @Volatile
+    var ticksExisted: Long = 0L
+        protected set
 
     /**
      * The [Side] of the [GameContainer], whether it is Client or Server.
@@ -46,6 +50,9 @@ abstract class GameContainer(open val networker: Networker) {
         }
     }
 
-    abstract fun update()
+    open fun update() {
+        ticksExisted++
+    }
+
     abstract fun dispose()
 }

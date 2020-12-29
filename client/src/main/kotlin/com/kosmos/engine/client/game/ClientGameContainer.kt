@@ -6,7 +6,11 @@ import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.game.GameContainer
 import com.kosmos.engine.common.registry.impl.EntityRegistry
 
-open class ClientGameContainer(override val networker: GameClient): GameContainer(networker) {
+/**
+ * @author Boston Vanseghi
+ * @since 1.0.0
+ */
+open class ClientGameContainer(tickRate: Long, override val networker: GameClient): GameContainer(tickRate, networker) {
 
     override val entityRegistry: EntityRegistry = EntityRegistry(this)
 
@@ -15,11 +19,11 @@ open class ClientGameContainer(override val networker: GameClient): GameContaine
         KosmosEngine.getInstance().eventBus.addListener(ClientGameListener(this))
     }
 
-    override fun update() {
-        TODO("Not yet implemented")
+    internal fun setTicksExisted(ticksExisted: Long) {
+        this.ticksExisted = ticksExisted
     }
 
     override fun dispose() {
-        TODO("Not yet implemented")
+        networker.close()
     }
 }

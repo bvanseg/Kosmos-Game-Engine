@@ -11,7 +11,11 @@ import com.kosmos.engine.server.event.listener.ServerGameListener
 import com.kosmos.engine.server.network.GameServer
 import com.kosmos.engine.server.registry.impl.ServerEntityRegistry
 
-open class ServerGameContainer(override val networker: GameServer): GameContainer(networker) {
+/**
+ * @author Boston Vanseghi
+ * @since 1.0.0
+ */
+open class ServerGameContainer(tickRate: Long, override val networker: GameServer): GameContainer(tickRate, networker) {
 
     override val entityRegistry: EntityRegistry = ServerEntityRegistry(this)
 
@@ -27,6 +31,8 @@ open class ServerGameContainer(override val networker: GameServer): GameContaine
     }
 
     override fun update() {
+        super.update()
+
         val entitiesToSyncAttribs = mutableListOf<Entity>()
 
         if (queuedEntities.isNotEmpty()) {

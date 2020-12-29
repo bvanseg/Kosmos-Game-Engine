@@ -15,7 +15,7 @@ fun main() {
     // Create client
     val client = GameClient()
 
-    val gameContainer = ClientGameContainer(client)
+    val gameContainer = ClientGameContainer(20L, client)
 
     gameContainer.init()
 

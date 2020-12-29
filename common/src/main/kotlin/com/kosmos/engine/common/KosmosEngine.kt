@@ -73,6 +73,7 @@ class KosmosEngine {
         messageRegistry.register(EntityCreateMessage::class)
         messageRegistry.register(AttributeUpdateMessage::class)
         messageRegistry.register(EntityDestroyMessage::class)
+        messageRegistry.register(TimeSyncMessage::class)
 
         /** network write registry **/
 

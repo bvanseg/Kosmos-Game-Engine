@@ -15,7 +15,7 @@ fun main() {
 
     val server = GameServer()
 
-    val gameContainer = ServerGameContainer(server)
+    val gameContainer = ServerGameContainer(20L, server)
 
     engine.eventBus.addListener(ServerListener(gameContainer))
 
