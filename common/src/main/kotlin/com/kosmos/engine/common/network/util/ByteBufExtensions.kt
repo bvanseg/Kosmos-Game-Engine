@@ -6,7 +6,14 @@ import org.joml.*
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.nio.charset.StandardCharsets
+import java.time.Instant
 import java.util.*
+
+fun ByteBuf.writeInstant(instant: Instant) {
+    this.writeLong(instant.toEpochMilli())
+}
+
+fun ByteBuf.readInstant(): Instant = Instant.ofEpochMilli(this.readLong())
 
 fun ByteBuf.writeBigInteger(bigInt: BigInteger) {
     val array = bigInt.toByteArray()
