@@ -1,6 +1,7 @@
 package com.kosmos.engine.common.attribute
 
 import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.number.HashCodeBuilder
 import bvanseg.kotlincommons.string.ToStringBuilder
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.util.readUTF8String
@@ -164,4 +165,14 @@ class AttributeMap(val bearer: Any? = null) {
     }
 
     override fun toString(): String = backingMap.toString()
+
+    override fun hashCode(): Int {
+        val builder = HashCodeBuilder(this::class)
+
+        for(attribute in getAllAttributes()) {
+            builder.append(attribute)
+        }
+
+        return builder.hashCode()
+    }
 }
