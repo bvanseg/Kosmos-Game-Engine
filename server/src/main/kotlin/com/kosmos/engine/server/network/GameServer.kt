@@ -1,27 +1,25 @@
 package com.kosmos.engine.server.network
 
-import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.io.logging.getLogger
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
-import com.kosmos.engine.server.event.ServerBindEvent
-import com.kosmos.engine.server.event.ServerCloseEvent
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.ctx.MessageContext
 import com.kosmos.engine.common.network.message.decode.MessageDecoder
 import com.kosmos.engine.common.network.message.encode.MessageEncoder
-import com.kosmos.engine.common.network.message.impl.EntityCreateMessage
-import com.kosmos.engine.common.network.message.impl.PingMessage
+import com.kosmos.engine.server.event.ServerBindEvent
+import com.kosmos.engine.server.event.ServerCloseEvent
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.Channel
+import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
-import io.netty.channel.ChannelFuture
 import io.netty.util.AttributeKey
 import java.net.InetSocketAddress
-import java.util.*
+import java.util.UUID
 
 /**
  * @author Boston Vanseghi

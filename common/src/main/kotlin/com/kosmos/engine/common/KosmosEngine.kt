@@ -1,7 +1,7 @@
 package com.kosmos.engine.common
 
-import bvanseg.kotlincommons.any.getLogger
-import bvanseg.kotlincommons.evenir.bus.EventBus
+import bvanseg.kotlincommons.io.logging.getLogger
+import bvanseg.kotlincommons.util.event.EventBus
 import com.kosmos.bootstrapper.event.PluginInitializationEvent
 import com.kosmos.bootstrapper.plugin.Plugin
 import com.kosmos.bootstrapper.plugin.PluginContainer

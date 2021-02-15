@@ -7,7 +7,7 @@ import com.kosmos.engine.common.network.message.ctx.GameContext
 import com.kosmos.engine.common.network.util.readUUID
 import com.kosmos.engine.common.network.util.writeUUID
 import io.netty.buffer.ByteBuf
-import java.util.*
+import java.util.UUID
 
 /**
  * @author Boston Vanseghi

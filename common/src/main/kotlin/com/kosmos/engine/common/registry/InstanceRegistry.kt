@@ -1,7 +1,7 @@
 package com.kosmos.engine.common.registry
 
-import bvanseg.kotlincommons.any.getLogger
-import bvanseg.kotlincommons.collection.DualHashMap
+import bvanseg.kotlincommons.grouping.collection.DualHashMap
+import bvanseg.kotlincommons.io.logging.getLogger
 import kotlin.reflect.KClass
 
 /**

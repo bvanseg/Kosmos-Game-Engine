@@ -1,6 +1,6 @@
 package com.kosmos.engine.common.network.message.decode
 
-import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.io.logging.getLogger
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.message.Message

@@ -1,6 +1,6 @@
 package com.kosmos.engine.common.entity
 
-import bvanseg.kotlincommons.comparable.clamp
+import bvanseg.kotlincommons.util.comparable.clamp
 import com.kosmos.engine.common.attribute.Attribute
 import com.kosmos.engine.common.attribute.AttributeMap
 

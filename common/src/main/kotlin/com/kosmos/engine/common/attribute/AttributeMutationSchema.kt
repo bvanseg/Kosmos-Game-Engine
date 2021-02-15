@@ -1,6 +1,6 @@
 package com.kosmos.engine.common.attribute
 
-import bvanseg.kotlincommons.string.ToStringBuilder
+import bvanseg.kotlincommons.lang.string.ToStringBuilder
 
 /**
  * @author Boston Vanseghi

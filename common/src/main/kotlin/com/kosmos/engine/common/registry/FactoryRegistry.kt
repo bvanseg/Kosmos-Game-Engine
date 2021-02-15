@@ -1,6 +1,6 @@
 package com.kosmos.engine.common.registry
 
-import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.io.logging.getLogger
 import kotlin.reflect.KClass
 
 /**

@@ -1,7 +1,7 @@
 package com.kosmos.engine.common.registry
 
-import bvanseg.kotlincommons.any.getLogger
-import bvanseg.kotlincommons.javaclass.createNewInstance
+import bvanseg.kotlincommons.io.logging.getLogger
+import bvanseg.kotlincommons.reflect.createInstanceFrom
 import kotlin.reflect.KClass
 
 /**
@@ -25,7 +25,7 @@ open class RegistryManager {
     }
 
     inline fun <reified T : Any> addFactoryRegistry(noinline factory: (FactoryRegistryEntry<T>) -> T? = { entry ->
-        createNewInstance(entry.value.java)
+        createInstanceFrom(entry.value.java)
     }): FactoryRegistry<T> {
         logger.info("Creating new registry for type: ${T::class}")
         val newRegistry = FactoryRegistry(factory = factory)

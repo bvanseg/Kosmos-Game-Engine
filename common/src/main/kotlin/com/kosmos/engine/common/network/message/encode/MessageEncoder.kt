@@ -1,6 +1,6 @@
 package com.kosmos.engine.common.network.message.encode
 
-import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.io.logging.getLogger
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.message.Message
@@ -11,7 +11,7 @@ import io.netty.buffer.Unpooled
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.MessageToByteEncoder
 import io.netty.util.AttributeKey
-import java.util.*
+import java.util.UUID
 
 /**
  * @author Boston Vanseghi

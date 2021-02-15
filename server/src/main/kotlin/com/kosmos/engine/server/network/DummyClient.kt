@@ -5,7 +5,7 @@ import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.ctx.MessageContext
 import io.netty.channel.Channel
-import java.util.*
+import java.util.UUID
 
 /**
  * Represents a client as the server sees it.

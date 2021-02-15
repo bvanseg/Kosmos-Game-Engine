@@ -1,7 +1,7 @@
 package com.kosmos.engine.server.event.listener
 
-import bvanseg.kotlincommons.any.getLogger
-import bvanseg.kotlincommons.evenir.annotation.SubscribeEvent
+import bvanseg.kotlincommons.io.logging.getLogger
+import bvanseg.kotlincommons.util.event.SubscribeEvent
 import com.kosmos.engine.common.network.message.impl.EntityCreateMessage
 import com.kosmos.engine.common.network.message.impl.TimeSyncMessage
 import com.kosmos.engine.server.event.ServerClientConnectEvent

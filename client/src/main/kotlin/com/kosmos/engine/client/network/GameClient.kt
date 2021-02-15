@@ -1,6 +1,6 @@
 package com.kosmos.engine.client.network
 
-import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.io.logging.getLogger
 import com.kosmos.engine.client.event.ClientCloseEvent
 import com.kosmos.engine.client.event.ClientConnectEvent
 import com.kosmos.engine.common.KosmosEngine
@@ -18,7 +18,7 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 import java.net.InetSocketAddress
-import java.util.*
+import java.util.UUID
 
 /**
  * @author Boston Vanseghi

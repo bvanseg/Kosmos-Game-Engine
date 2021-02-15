@@ -7,7 +7,7 @@ import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.ctx.GameContext
 import com.kosmos.engine.common.registry.impl.EntityRegistry
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 /**

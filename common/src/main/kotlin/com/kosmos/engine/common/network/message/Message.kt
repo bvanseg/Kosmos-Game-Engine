@@ -1,6 +1,6 @@
 package com.kosmos.engine.common.network.message
 
-import bvanseg.kotlincommons.any.getLogger
+import bvanseg.kotlincommons.io.logging.getLogger
 import com.kosmos.engine.common.network.Networker
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.ctx.MessageContext

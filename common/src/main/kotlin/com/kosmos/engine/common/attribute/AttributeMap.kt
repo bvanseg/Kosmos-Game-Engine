@@ -1,14 +1,12 @@
 package com.kosmos.engine.common.attribute
 
-import bvanseg.kotlincommons.any.getLogger
-import bvanseg.kotlincommons.number.HashCodeBuilder
-import bvanseg.kotlincommons.string.ToStringBuilder
+import bvanseg.kotlincommons.io.logging.getLogger
+import bvanseg.kotlincommons.util.HashCodeBuilder
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.util.readUTF8String
 import com.kosmos.engine.common.network.util.writeUTF8String
 import io.netty.buffer.ByteBuf
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.reflect.KClass
 
 /**
  * @author Boston Vanseghi
@@ -167,7 +165,7 @@ class AttributeMap(val bearer: Any? = null) {
     override fun toString(): String = backingMap.toString()
 
     override fun hashCode(): Int {
-        val builder = HashCodeBuilder(this::class)
+        val builder = HashCodeBuilder.builder(this::class)
 
         for(attribute in getAllAttributes()) {
             builder.append(attribute)

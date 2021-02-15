@@ -1,7 +1,7 @@
 package com.kosmos.engine.server.network
 
-import bvanseg.kotlincommons.armada.CommandManager
-import bvanseg.kotlincommons.evenir.annotation.SubscribeEvent
+import bvanseg.kotlincommons.util.command.CommandManager
+import bvanseg.kotlincommons.util.event.SubscribeEvent
 import com.kosmos.engine.common.entity.EntityZealot
 import com.kosmos.engine.common.event.RegisterEntitiesEvent
 import com.kosmos.engine.common.network.message.impl.PingMessage
@@ -10,7 +10,7 @@ import com.kosmos.engine.server.event.ServerClientConnectEvent
 import com.kosmos.engine.server.game.ServerGameContainer
 import com.kosmos.engine.server.network.commands.EntityGear
 import com.kosmos.engine.server.network.commands.ServerGear
-import java.util.*
+import java.util.Scanner
 
 /**
  * @author Boston Vanseghi

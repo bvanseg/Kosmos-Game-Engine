@@ -1,7 +1,7 @@
 package com.kosmos.engine.common.network.message
 
 import io.netty.buffer.ByteBuf
-import java.util.*
+import java.util.UUID
 
 /**
  * @author Boston Vanseghi

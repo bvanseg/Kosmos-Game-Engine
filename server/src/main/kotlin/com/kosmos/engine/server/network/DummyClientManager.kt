@@ -1,6 +1,6 @@
 package com.kosmos.engine.server.network
 
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 class DummyClientManager {

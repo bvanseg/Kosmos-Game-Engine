@@ -3,7 +3,6 @@ package com.kosmos.engine.client.network
 import com.kosmos.bootstrapper.event.PluginInitializationEvent
 import com.kosmos.engine.client.game.ClientGameContainer
 import com.kosmos.engine.common.KosmosEngine
-import com.kosmos.engine.common.game.GameContainer
 
 fun main() {
     val engine = KosmosEngine()

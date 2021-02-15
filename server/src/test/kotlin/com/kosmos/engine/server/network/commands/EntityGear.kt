@@ -1,12 +1,12 @@
 package com.kosmos.engine.server.network.commands
 
-import bvanseg.kotlincommons.armada.annotation.Command
-import bvanseg.kotlincommons.armada.context.Context
-import bvanseg.kotlincommons.armada.gear.Gear
+import bvanseg.kotlincommons.util.command.annotation.Command
+import bvanseg.kotlincommons.util.command.context.Context
+import bvanseg.kotlincommons.util.command.gear.Gear
 import com.kosmos.engine.common.entity.Entity
 import com.kosmos.engine.common.entity.EntityZealot
 import com.kosmos.engine.server.game.ServerGameContainer
-import java.util.*
+import java.util.UUID
 
 /**
  * @author Boston Vanseghi

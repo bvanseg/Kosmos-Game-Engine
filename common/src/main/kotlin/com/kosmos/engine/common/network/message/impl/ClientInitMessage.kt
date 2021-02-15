@@ -1,6 +1,6 @@
 package com.kosmos.engine.common.network.message.impl
 
-import bvanseg.kotlincommons.project.Version
+import bvanseg.kotlincommons.util.project.Version
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
@@ -11,7 +11,7 @@ import com.kosmos.engine.common.network.util.readVersion
 import com.kosmos.engine.common.network.util.writeUUID
 import com.kosmos.engine.common.network.util.writeVersion
 import io.netty.buffer.ByteBuf
-import java.util.*
+import java.util.UUID
 
 /**
  * @author Boston Vanseghi

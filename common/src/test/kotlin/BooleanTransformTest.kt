@@ -1,4 +1,8 @@
-import com.kosmos.engine.common.network.util.*
+import com.kosmos.engine.common.network.util.toBooleanArray
+import com.kosmos.engine.common.network.util.toByte
+import com.kosmos.engine.common.network.util.toInt
+import com.kosmos.engine.common.network.util.toLong
+import com.kosmos.engine.common.network.util.toShort
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

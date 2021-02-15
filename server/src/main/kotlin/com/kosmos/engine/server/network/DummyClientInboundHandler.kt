@@ -1,19 +1,19 @@
 package com.kosmos.engine.server.network
 
-import bvanseg.kotlincommons.any.getLogger
-import bvanseg.kotlincommons.project.Version
+import bvanseg.kotlincommons.io.logging.getLogger
+import bvanseg.kotlincommons.util.project.Version
 import com.kosmos.engine.common.KosmosEngine
 import com.kosmos.engine.common.network.Networker
-import com.kosmos.engine.server.event.ServerHandleMessageEvent
 import com.kosmos.engine.common.network.Side
 import com.kosmos.engine.common.network.message.Message
 import com.kosmos.engine.common.network.message.ctx.MessageContext
 import com.kosmos.engine.common.network.message.impl.ClientInitMessage
 import com.kosmos.engine.server.event.ServerClientConnectEvent
+import com.kosmos.engine.server.event.ServerHandleMessageEvent
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.util.AttributeKey
-import java.util.*
+import java.util.UUID
 
 /**
  * @author Boston Vanseghi

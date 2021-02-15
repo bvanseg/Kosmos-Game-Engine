@@ -1,6 +1,6 @@
 package com.kosmos.engine.client.network
 
-import bvanseg.kotlincommons.evenir.annotation.SubscribeEvent
+import bvanseg.kotlincommons.util.event.SubscribeEvent
 import com.kosmos.engine.common.entity.EntityZealot
 import com.kosmos.engine.common.event.RegisterEntitiesEvent
 
