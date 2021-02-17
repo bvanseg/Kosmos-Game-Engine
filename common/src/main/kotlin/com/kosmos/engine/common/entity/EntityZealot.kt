@@ -1,8 +1,8 @@
 package com.kosmos.engine.common.entity
 
-import bvanseg.kotlincommons.util.comparable.clamp
 import com.kosmos.engine.common.attribute.Attribute
 import com.kosmos.engine.common.attribute.AttributeMap
+import com.kosmos.engine.common.attribute.add
 
 /**
  * @author Boston Vanseghi
@@ -10,17 +10,17 @@ import com.kosmos.engine.common.attribute.AttributeMap
  */
 class EntityZealot: Entity() {
 
-    val health                  = Attribute.create("health", 100.0f)
-    val healthRegen             = Attribute.create("healthRegen", 0.25f)
-    val maxHealth               = Attribute.create("maxHealth", 100.0f)
+    val maxHealth = Attribute.create("maxHealth", 100.0f)
+    val health = Attribute.create("health", maxHealth.get(), 0f, ubcb = { maxHealth.get() })
+    val healthRegen = Attribute.create("healthRegen", 0.25f)
 
-    val shields                 = Attribute.create("shields", 200.0f)
-    val shieldsRegen            = Attribute.create("shieldsRegen", 2.0f)
-    val maxShields              = Attribute.create("maxShields", 200.0f)
+    val maxShields = Attribute.create("maxShields", 200.0f)
+    val shields = Attribute.create("shields", maxShields.get(), 0f, ubcb = { maxShields.get() })
+    val shieldsRegen = Attribute.create("shieldsRegen", 2.0f)
 
-    val energy                  = Attribute.create("energy", 50.0f)
-    val energyRegen             = Attribute.create("energyRegen", 0.025f)
-    val maxEnergy               = Attribute.create("maxEnergy", 200.0f)
+    val maxEnergy = Attribute.create("maxEnergy", 200.0f)
+    val energy = Attribute.create("energy", 50.0f, 0f, ubcb = { maxEnergy.get() })
+    val energyRegen = Attribute.create("energyRegen", 0.025f)
 
     override fun initAttributes(attributeMap: AttributeMap) {
         super.initAttributes(attributeMap)
@@ -40,8 +40,8 @@ class EntityZealot: Entity() {
 
     override fun update() {
         super.update()
-        health.set(clamp(health.get() + healthRegen.get(), 0f, maxHealth.get()))
-        shields.set(clamp(shields.get() + shieldsRegen.get(), 0f, maxShields.get()))
-        energy.set(clamp(energy.get() + energyRegen.get(), 0f, maxEnergy.get()))
+        health.add(healthRegen)
+        shields.add(shieldsRegen)
+        energy.add(energyRegen)
     }
 }
