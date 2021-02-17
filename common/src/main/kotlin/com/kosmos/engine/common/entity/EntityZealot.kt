@@ -25,17 +25,17 @@ class EntityZealot: Entity() {
     override fun initAttributes(attributeMap: AttributeMap) {
         super.initAttributes(attributeMap)
 
-        attributeMap.addAttribute(health)
-        attributeMap.addAttribute(healthRegen)
-        attributeMap.addAttribute(maxHealth)
-
-        attributeMap.addAttribute(shields)
-        attributeMap.addAttribute(shieldsRegen)
-        attributeMap.addAttribute(maxShields)
-
-        attributeMap.addAttribute(energy)
-        attributeMap.addAttribute(energyRegen)
-        attributeMap.addAttribute(maxEnergy)
+        attributeMap.addAll(
+            health,
+            healthRegen,
+            maxHealth,
+            shields,
+            shieldsRegen,
+            maxShields,
+            energy,
+            energyRegen,
+            maxEnergy
+        )
     }
 
     override fun update() {

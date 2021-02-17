@@ -34,6 +34,13 @@ class AttributeMap(val bearer: Any? = null) {
         modifiedAttributes.add(attribute.name)
     }
 
+    fun addAll(attribute: Attribute<out Any>, vararg attributes: Attribute<out Any>) {
+        addAttribute(attribute)
+        attributes.forEach {
+            addAttribute(it)
+        }
+    }
+
     fun <T: Any> createAttribute(name: String, value: T): Attribute<T> {
 
         val klazz = value::class
