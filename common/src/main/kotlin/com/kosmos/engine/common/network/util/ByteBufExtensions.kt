@@ -38,6 +38,72 @@ import java.nio.charset.StandardCharsets
 import java.time.Instant
 import java.util.UUID
 
+inline fun <reified T> ByteBuf.read(): T = when(T::class) {
+    Char::class -> this.readChar()
+    Boolean::class -> this.readBoolean()
+    Byte::class -> this.readByte()
+    Short::class -> this.readShort()
+    Int::class -> this.readInt()
+    Long::class -> this.readLong()
+    Float::class -> this.readFloat()
+    Double::class -> this.readDouble()
+    String::class -> this.readUTF8String()
+    Instant::class -> this.readInstant()
+    BigInteger::class -> this.readBigInteger()
+    BigDecimal::class -> this.readBigDecimal()
+    UUID::class -> this.readUUID()
+    Vector2ic::class -> this.readVector2ic()
+    Vector2fc::class -> this.readVector2fc()
+    Vector2dc::class -> this.readVector2dc()
+    Vector3ic::class -> this.readVector3ic()
+    Vector3fc::class -> this.readVector3fc()
+    Vector3dc::class -> this.readVector3dc()
+    Vector4ic::class -> this.readVector4ic()
+    Vector4fc::class -> this.readVector4fc()
+    Vector4dc::class -> this.readVector4dc()
+    Matrix2fc::class -> this.readMatrix2fc()
+    Matrix2dc::class -> this.readMatrix2dc()
+    Matrix3fc::class -> this.readMatrix3fc()
+    Matrix3dc::class -> this.readMatrix3dc()
+    Matrix4fc::class -> this.readMatrix4fc()
+    Matrix4dc::class -> this.readMatrix4dc()
+    else -> throw IllegalArgumentException("Reading type '${T::class}' from ByteBuf is not supported!")
+} as T
+
+inline fun <reified T> ByteBuf.write(value: T) {
+    when(T::class) {
+        Char::class -> this.writeChar((value as Char).toInt())
+        Boolean::class -> this.writeBoolean(value as Boolean)
+        Byte::class -> this.writeByte((value as Byte).toInt())
+        Short::class -> this.writeShort((value as Short).toInt())
+        Int::class -> this.writeInt(value as Int)
+        Long::class -> this.writeLong(value as Long)
+        Float::class -> this.writeFloat(value as Float)
+        Double::class -> this.writeDouble(value as Double)
+        String::class -> this.writeUTF8String(value as String)
+        Instant::class -> this.writeInstant(value as Instant)
+        BigInteger::class -> this.writeBigInteger(value as BigInteger)
+        BigDecimal::class -> this.writeBigDecimal(value as BigDecimal)
+        UUID::class -> this.writeUUID(value as UUID)
+        Vector2ic::class -> this.writeVector2ic(value as Vector2ic)
+        Vector2fc::class -> this.writeVector2fc(value as Vector2fc)
+        Vector2dc::class -> this.writeVector2dc(value as Vector2dc)
+        Vector3ic::class -> this.writeVector3ic(value as Vector3ic)
+        Vector3fc::class -> this.writeVector3fc(value as Vector3fc)
+        Vector3dc::class -> this.writeVector3dc(value as Vector3dc)
+        Vector4ic::class -> this.writeVector4ic(value as Vector4ic)
+        Vector4fc::class -> this.writeVector4fc(value as Vector4fc)
+        Vector4dc::class -> this.writeVector4dc(value as Vector4dc)
+        Matrix2fc::class -> this.writeMatrix2fc(value as Matrix2fc)
+        Matrix2dc::class -> this.writeMatrix2dc(value as Matrix2dc)
+        Matrix3fc::class -> this.writeMatrix3fc(value as Matrix3fc)
+        Matrix3dc::class -> this.writeMatrix3dc(value as Matrix3dc)
+        Matrix4fc::class -> this.writeMatrix4fc(value as Matrix4fc)
+        Matrix4dc::class -> this.writeMatrix4dc(value as Matrix4dc)
+        else -> throw IllegalArgumentException("Writing type '${T::class}' to ByteBuf is not supported!")
+    }
+}
+
 fun ByteBuf.writeInstant(instant: Instant) {
     this.writeLong(instant.toEpochMilli())
 }
