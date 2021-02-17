@@ -15,6 +15,7 @@ import io.netty.buffer.ByteBuf
 import org.joml.*
 import java.math.BigDecimal
 import java.math.BigInteger
+import java.util.UUID
 import kotlin.reflect.KClass
 
 /**
@@ -78,10 +79,11 @@ class KosmosEngine {
         /** network write registry **/
 
         val networkedTypes = hashSetOf<KClass<*>>(
+            Char::class, Boolean::class,
             Byte::class, Short::class, Int::class, Long::class,
             Float::class, Double::class,
             BigInteger::class, BigDecimal::class,
-            String::class,
+            String::class, UUID::class,
             Vector2ic::class, Vector2fc::class, Vector2dc::class,
             Vector3ic::class, Vector3fc::class, Vector3dc::class,
             Vector4ic::class, Vector4fc::class, Vector4dc::class,
