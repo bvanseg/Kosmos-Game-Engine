@@ -8,6 +8,8 @@ class Window internal constructor(width: Int, height: Int, title: CharSequence) 
 
     var handle: Long = NULL
         private set
+    var creationTime: Long = 0
+        private set
     var width: Int = width
         private set
     var height: Int = height
@@ -28,24 +30,21 @@ class Window internal constructor(width: Int, height: Int, title: CharSequence) 
         handle = glfwCreateWindow(width, height, title, NULL, shareHandle)
         if (handle == NULL)
             throw RuntimeException("Failed to create GLFW Window")
+        creationTime = System.currentTimeMillis()
 
         val videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor())
         if (videoMode != null)
-            glfwSetWindowPos(handle, (videoMode.width() - this.width) / 2, (videoMode.height() - this.height) / 2)
+            glfwSetWindowPos(handle, (videoMode.width() - width) / 2, (videoMode.height() - height) / 2)
 
-        glfwSetFramebufferSizeCallback(handle) { window, width, height ->
-            if (this.handle == window) {
-                this.framebufferWidth = width
-                this.framebufferHeight = height
-            }
+        glfwSetFramebufferSizeCallback(handle) { _, w, h ->
+            framebufferWidth = w
+            framebufferHeight = h
         }
-        glfwSetWindowSizeCallback(handle) { window, width, height ->
-            if (this.handle == window) {
-                this.width = width
-                this.height = height
-            }
+        glfwSetWindowSizeCallback(handle) { _, w, h ->
+            width = w
+            height = h
         }
-        glfwSetWindowCloseCallback(handle) { window -> this.closing = this.closing || this.handle == window }
+        glfwSetWindowCloseCallback(handle) { window -> closing = true }
     }
 
     fun update() = glfwSwapBuffers(handle)
