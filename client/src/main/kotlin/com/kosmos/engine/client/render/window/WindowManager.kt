@@ -27,6 +27,8 @@ object WindowManager {
         return window
     }
 
+    fun update() = glfwPollEvents()
+
     fun destroyWindows() {
         windows.forEach(Window::free)
         windows.clear()

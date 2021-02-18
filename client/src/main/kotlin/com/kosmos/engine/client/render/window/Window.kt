@@ -48,10 +48,7 @@ class Window internal constructor(width: Int, height: Int, title: CharSequence) 
         glfwSetWindowCloseCallback(handle) { window -> this.closing = this.closing || this.handle == window }
     }
 
-    fun update() {
-        glfwSwapBuffers(handle)
-        glfwPollEvents()
-    }
+    fun update() = glfwSwapBuffers(handle)
 
     fun focus() = glfwFocusWindow(handle)
 
