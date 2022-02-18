@@ -44,8 +44,8 @@ class KosmosEngine {
         val annotationData = this::class.java.getAnnotation(Plugin::class.java)
 
         // Return the plugin manager's container, otherwise create our own.
-        return@lazy PluginManager.getPlugin("kosmos_engine") ?:
-        PluginContainer(this, this::class.java, annotationData, mutableListOf(), null)
+        return@lazy PluginManager.getPluginContainer("kosmos_engine") ?:
+        PluginContainer(this, this::class.java, annotationData, hashSetOf(), null)
     }
 
     /**

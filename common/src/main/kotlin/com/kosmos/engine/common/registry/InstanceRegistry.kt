@@ -34,11 +34,6 @@ class InstanceRegistry<K : Any, V : Any>: Registry<K, V>() {
         logger.info("Successfully registered entry $value")
     }
 
-    fun unregister(value: KClass<V>) {
-        val entry = entries.remove(value)
-        logger.info("Successfully unregistered entry $value")
-    }
-
     fun getKeyByID(id: Int) = idToKeyMap[id]
     fun getIDForKey(key: K) = keyToIDMap[key]
     fun getEntry(key: K) = entries[key] as InstanceRegistryEntry?
